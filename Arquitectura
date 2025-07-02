@@ -1,0 +1,36 @@
+crowdknock_flutter/
+│
+├── lib/
+│   ├── main.dart                     # Punto de entrada
+│   ├── app.dart                      # Configuración general (temas, rutas)
+│   ├── core/                         # Componentes compartidos
+│   │   ├── constants/                # Constantes globales (colores, strings, assets)
+│   │   ├── widgets/                  # Widgets reutilizables (botones, cards)
+│   │   ├── utils/                    # Funciones de ayuda (formatos, validaciones)
+│   │   └── services/                 # Servicios generales (API, auth, notificaciones)
+│   │
+│   ├── config/                       # Configs específicas por entorno (dev/prod)
+│   │   └── env.dart
+│   │
+│   ├── data/                         # Acceso a datos
+│   │   ├── models/                   # Modelos (User, Challenge, Reporte, etc)
+│   │   ├── repositories/             # Lógica de obtención (API, local storage)
+│   │   └── providers/                # Providers (Firebase, REST, etc)
+│   │
+│   ├── features/                     # Módulos del sistema (por dominio)
+│   │   ├── auth/                     # Login, registro, auth JWT
+│   │   ├── dashboard/                # Pantalla principal del usuario
+│   │   ├── challenges/               # Subir/ver desafíos (audio, video, minijuegos)
+│   │   ├── polls/                    # Crear/ver encuestas
+│   │   ├── reports/                  # Ver denuncias
+│   │   ├── admin_panel/              # Panel administrativo (analytics, users, etc)
+│   │   └── settings/                 # Ajustes de cuenta, tema, idioma
+│   │
+│   └── routes/                       # Sistema de navegación centralizado
+│       └── app_router.dart
+│
+├── assets/                          # Imágenes, iconos, fuentes
+│
+├── test/                            # Pruebas unitarias y widget tests
+│
+└── pubspec.yaml                     # Dependencias y configuración del proyecto
