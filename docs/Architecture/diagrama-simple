@@ -1,15 +1,43 @@
 CrowdKnock_flutter/ 
-├── backend/                        # Servidor Express (API REST) + PostgreSQL + JWT
-│   ├── src/
-│   │   ├── controllers/            # Lógica de rutas (auth, users, reports, etc)
-│   │   ├── middlewares/           # JWT, validaciones, errores
-│   │   ├── models/                # Esquemas de datos (Sequelize u ORM usado)
-│   │   ├── routes/                # Rutas organizadas por recurso
-│   │   ├── services/              # Lógica de negocio
-│   │   ├── config/                # Configuración de DB, entorno
-│   │   └── index.js               # Entry point del servidor
-│   ├── .env
-│   └── package.json
+backend/
+├── src/
+│   ├── config/               # Configuraciones globales (DB, env, etc.)
+│   │   ├── db.js
+│   │   ├── env.js
+│   ├── middlewares/         # JWT, errores, CORS, logger, etc.
+│   │   ├── authMiddleware.js
+│   │   ├── errorHandler.js
+│   ├── routes/              # Rutas organizadas por módulo
+│   │   ├── auth.routes.js
+│   │   ├── users.routes.js
+│   │   ├── content.routes.js
+│   │   ├── moderation.routes.js
+│   │   ├── reports.routes.js
+│   │   ├── payments.routes.js
+│   │   └── settings.routes.js
+│   ├── controllers/         # Lógica de negocio por módulo
+│   │   ├── auth.controller.js
+│   │   ├── users.controller.js
+│   │   ├── content.controller.js
+│   │   ├── moderation.controller.js
+│   │   ├── reports.controller.js
+│   │   └── payments.controller.js
+│   ├── models/              # Consultas a la base de datos (PostgreSQL)
+│   │   ├── user.model.js
+│   │   ├── content.model.js
+│   │   ├── report.model.js
+│   │   ├── payment.model.js
+│   │   └── ...
+│   ├── utils/               # Funciones auxiliares y helpers
+│   │   ├── jwt.js
+│   │   ├── email.js
+│   │   └── validation.js
+│   ├── index.js             # Punto de entrada del servidor
+│   └── app.js               # Configuración de Express y middlewares
+├── .env                     # Variables de entorno
+├── package.json
+└── README.md
+
 
 ├── frontend-app/                  # App Flutter para usuarios (mobile-first)
 │   ├── lib/
