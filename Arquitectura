@@ -65,7 +65,9 @@ CrowdKnock_flutter/
 
 
 
-crowdknock_flutter/
+// DETALLADO DE:
+
+crowdknock_flutter/frontend-app/  
 │
 ├── lib/
 │   ├── main.dart                     # Punto de entrada
@@ -101,19 +103,4 @@ crowdknock_flutter/
 ├── test/                            # Pruebas unitarias y widget tests
 │
 └── pubspec.yaml                     # Dependencias y configuración del proyecto
-
-
-
-CrowdKnock/
-├── backend/                        # Servidor Express (API REST) + PostgreSQL + JWT
-│   ├── src/
-│   │   ├── controllers/            # Lógica de rutas (auth, users, reports, etc)
-│   │   ├── middlewares/           # JWT, validaciones, errores
-│   │   ├── models/                # Esquemas de datos (Sequelize u ORM usado)
-│   │   ├── routes/                # Rutas organizadas por recurso
-│   │   ├── services/              # Lógica de negocio
-│   │   ├── config/                # Configuración de DB, entorno
-│   │   └── index.js               # Entry point del servidor
-│   ├── .env
-│   └── package.json
 
