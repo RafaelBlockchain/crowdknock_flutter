@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class UserManagementPage extends StatefulWidget {
-  const UserManagementPage({super.key});
+class UsersManagementPage extends StatefulWidget {
+  const UsersManagementPage({super.key});
 
   @override
-  State<UserManagementPage> createState() => _UserManagementPageState();
+  State<UsersManagementPage> createState() => _UsersManagementPageState();
 }
 
-class _UserManagementPageState extends State<UserManagementPage> {
+class _UsersManagementPageState extends State<UsersManagementPage> {
   final TextEditingController _searchController = TextEditingController();
 
+  // 🔧 Datos simulados. Reemplazar por llamada al backend protegido por JWT (GET /users).
   final List<Map<String, String>> _allUsers = [
     {
       'id': '1',
@@ -51,69 +52,71 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('✏️ Editar Usuario'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Nombre'),
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Edit User'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+              ),
+              TextField(
+                controller: roleController,
+                decoration: const InputDecoration(labelText: 'Role'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
             ),
-            TextField(
-              controller: roleController,
-              decoration: const InputDecoration(labelText: 'Rol'),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  user['name'] = nameController.text;
+                  user['role'] = roleController.text;
+                });
+                // TODO: PUT /users/:id con JWT para actualizar nombre y rol.
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('✅ User updated')),
+                );
+              },
+              child: const Text('Save'),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                user['name'] = nameController.text;
-                user['role'] = roleController.text;
-              });
-              // TODO: PUT /users/:id con JWT
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('✅ Usuario actualizado')),
-              );
-            },
-            child: const Text('Guardar'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   void _banUser(Map<String, String> user) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('🚫 Confirmar bloqueo'),
-        content: Text('¿Deseas bloquear a ${user['name']}?'),
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Ban'),
+        content: Text('Are you sure you want to ban ${user['name']}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
               setState(() {
                 user['status'] = 'Banned';
               });
-              // TODO: PATCH /users/:id/ban con JWT
+              // TODO: PATCH /users/:id/ban con JWT.
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('🚫 Usuario bloqueado')),
+                const SnackBar(content: Text('🚫 User banned')),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Bloquear'),
+            child: const Text('Ban'),
           ),
         ],
       ),
@@ -126,7 +129,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       backgroundColor: Colors.grey[100],
       drawer: const _Sidebar(),
       appBar: AppBar(
-        title: const Text('👥 Gestión de Usuarios'),
+        title: const Text('👥 User Management'),
         backgroundColor: Colors.indigo,
       ),
       body: Padding(
@@ -135,14 +138,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Panel de gestión de usuarios',
+              'User Management Panel',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _searchController,
               decoration: const InputDecoration(
-                hintText: '🔍 Buscar por nombre o correo...',
+                hintText: '🔍 Search by name or email...',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
                 filled: true,
@@ -158,11 +161,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   child: DataTable(
                     columns: const [
                       DataColumn(label: Text('ID')),
-                      DataColumn(label: Text('Nombre')),
-                      DataColumn(label: Text('Correo')),
-                      DataColumn(label: Text('Rol')),
-                      DataColumn(label: Text('Estado')),
-                      DataColumn(label: Text('Acciones')),
+                      DataColumn(label: Text('Name')),
+                      DataColumn(label: Text('Email')),
+                      DataColumn(label: Text('Role')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Actions')),
                     ],
                     rows: _filteredUsers.map((user) {
                       return DataRow(
@@ -181,35 +184,31 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               ),
                             ),
                           ),
-                          DataCell(
-                            Row(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () => _banUser(user),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
-                                    textStyle:
-                                        const TextStyle(fontSize: 12),
-                                  ),
-                                  child: const Text('Bloquear'),
+                          DataCell(Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => _banUser(user),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  textStyle: const TextStyle(fontSize: 12),
                                 ),
-                                const SizedBox(width: 8),
-                                ElevatedButton(
-                                  onPressed: () => _editUser(user),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
-                                    textStyle:
-                                        const TextStyle(fontSize: 12),
-                                  ),
-                                  child: const Text('Editar'),
+                                child: const Text('Ban'),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: () => _editUser(user),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  textStyle: const TextStyle(fontSize: 12),
                                 ),
-                              ],
-                            ),
-                          ),
+                                child: const Text('Edit'),
+                              ),
+                            ],
+                          )),
                         ],
                       );
                     }).toList(),
@@ -224,7 +223,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 }
 
-// Sidebar (puedes extraerlo a un widget global compartido)
+// 🔽 Sidebar persistente reutilizable
 class _Sidebar extends StatelessWidget {
   const _Sidebar();
 
@@ -244,10 +243,8 @@ class _Sidebar extends StatelessWidget {
           ),
           SizedBox(height: 20),
           _SidebarItem(title: 'Dashboard', route: '/dashboard'),
-          _SidebarItem(title: 'Gestión de Usuarios', route: '/manage-users', isActive: true),
-          _SidebarItem(title: 'Pagos', route: '/payments'),
-          _SidebarItem(title: 'Estadísticas', route: '/metrics'),
-          _SidebarItem(title: 'Configuración', route: '/settings'),
+          _SidebarItem(title: 'Users', route: '/manage-users', isActive: true),
+          _SidebarItem(title: 'Settings', route: '/settings'),
         ],
       ),
     );
