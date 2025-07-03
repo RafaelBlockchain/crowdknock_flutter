@@ -1,4 +1,4 @@
-CrowdKnock_flutter/
+CrowdKnock_flutter/ 
 ├── backend/                        # Servidor Express (API REST) + PostgreSQL + JWT
 │   ├── src/
 │   │   ├── controllers/            # Lógica de rutas (auth, users, reports, etc)
