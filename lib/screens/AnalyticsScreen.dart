@@ -1,0 +1,284 @@
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+
+class AnalyticsScreen extends StatelessWidget {
+  const AnalyticsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      body: Row(
+        children: [
+          // Sidebar
+          Container(
+            width: 260,
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'CrowdKnock Admin',
+                  style: TextStyle(
+                    color: Color(0xFF4F46E5),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 24),
+                _NavLink(label: 'Dashboard', route: '/dashboard'),
+                _NavLink(label: 'Manage Users', route: '/manage-users'),
+                _NavLink(label: 'Manage Content', route: '/manage-content'),
+                _NavLink(label: 'Moderation', route: '/moderation'),
+                _NavLink(label: 'Analytics', route: '/analytics', selected: true),
+                _NavLink(label: 'Settings', route: '/settings'),
+              ],
+            ),
+          ),
+
+          // Main content
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '📈 Analytics',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Métricas generales de la plataforma en los últimos días.',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Métricas
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      int crossAxisCount = 1;
+                      if (screenWidth > 1024) {
+                        crossAxisCount = 3;
+                      } else if (screenWidth > 768) {
+                        crossAxisCount = 2;
+                      }
+
+                      return GridView.count(
+                        crossAxisCount: crossAxisCount,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: const [
+                          _MetricCard(title: '👥 Total de Usuarios', value: '12,340'),
+                          _MetricCard(title: '📹 Videos Subidos', value: '842'),
+                          _MetricCard(title: '🔥 Desafíos Activos', value: '29'),
+                        ],
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Gráficos
+                  LayoutBuilder(builder: (context, constraints) {
+                    final isWide = constraints.maxWidth > 1000;
+                    return Flex(
+                      direction: isWide ? Axis.horizontal : Axis.vertical,
+                      children: [
+                        Expanded(
+                          child: _ChartCard(
+                            title: '📈 Crecimiento de Usuarios (7 días)',
+                            chart: _buildLineChart(),
+                          ),
+                        ),
+                        const SizedBox(width: 16, height: 16),
+                        Expanded(
+                          child: _ChartCard(
+                            title: '👁️‍🗨️ Visitas a Videos por Día',
+                            chart: _buildBarChart(),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+
+                  const SizedBox(height: 40),
+                  const Center(
+                    child: Text(
+                      '© 2025 CrowdKnock. Todos los derechos reservados.',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildLineChart() {
+    return LineChart(
+      LineChartData(
+        titlesData: FlTitlesData(
+          leftTitles: const AxisTitles(),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                return Text(labels[value.toInt() % 7]);
+              },
+            ),
+          ),
+        ),
+        gridData: FlGridData(show: false),
+        lineBarsData: [
+          LineChartBarData(
+            isCurved: true,
+            color: const Color(0xFF6366F1),
+            belowBarData: BarAreaData(
+              show: true,
+              color: const Color(0xFF6366F1).withOpacity(0.2),
+            ),
+            dotData: FlDotData(show: false),
+            spots: const [
+              FlSpot(0, 30),
+              FlSpot(1, 50),
+              FlSpot(2, 45),
+              FlSpot(3, 70),
+              FlSpot(4, 60),
+              FlSpot(5, 90),
+              FlSpot(6, 100),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _buildBarChart() {
+    return BarChart(
+      BarChartData(
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                return Text(labels[value.toInt() % 7]);
+              },
+            ),
+          ),
+        ),
+        gridData: FlGridData(show: false),
+        barGroups: const [
+          BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 400, color: Color(0xFF10B981))]),
+          BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 520, color: Color(0xFF10B981))]),
+          BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 600, color: Color(0xFF10B981))]),
+          BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 710, color: Color(0xFF10B981))]),
+          BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 800, color: Color(0xFF10B981))]),
+          BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 950, color: Color(0xFF10B981))]),
+          BarChartGroupData(x: 6, barRods: [BarChartRodData(toY: 1200, color: Color(0xFF10B981))]),
+        ],
+      ),
+    );
+  }
+}
+
+// Sidebar link
+class _NavLink extends StatelessWidget {
+  final String label;
+  final String route;
+  final bool selected;
+
+  const _NavLink({
+    required this.label,
+    required this.route,
+    this.selected = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.pushNamed(context, route),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: selected ? Colors.indigo : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MetricCard extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const _MetricCard({required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+            const SizedBox(height: 8),
+            Text(value,
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChartCard extends StatelessWidget {
+  final String title;
+  final Widget chart;
+
+  const _ChartCard({required this.title, required this.chart});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shadowColor: Colors.black12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 16),
+            SizedBox(height: 200, child: chart),
+          ],
+        ),
+      ),
+    );
+  }
+}
