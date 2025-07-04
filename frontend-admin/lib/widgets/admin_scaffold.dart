@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
-import 'admin_sidebar.dart';
-import 'package:go_router/go_router.dart';
+import 'package:frontend_admin/widgets/sidebar.dart';
+import 'package:frontend_admin/widgets/top_app_bar.dart';
 
 class AdminScaffold extends StatelessWidget {
   final String title;
-  final Widget body;
+  final Widget child;
 
   const AdminScaffold({
     super.key,
     required this.title,
-    required this.body,
+    required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    final currentRoute = GoRouter.of(context).location;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Colors.indigo,
-      ),
-      drawer: AdminSidebar(currentRoute: currentRoute),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: body,
+      drawer: const Sidebar(),
+      appBar: TopAppBar(title: title),
+      backgroundColor: Colors.grey[100],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: child,
+        ),
       ),
     );
   }
