@@ -1,63 +1,40 @@
-const db = require('../config/db');
+// backend/src/controllers/content.controller.js
+const ContentService = require('../services/ContentService');
 
-// Obtener lista de contenido
-const getAllContent = async (req, res) => {
+const getAllContent = async (req, res, next) => {
   try {
-    const result = await db.query(`
-      SELECT id, title, type, status, created_at
-      FROM contents
-      ORDER BY created_at DESC
-    `);
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error al obtener contenidos:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    const contents = await ContentService.getAllContent();
+    res.json(contents);
+  } catch (err) {
+    next(err);
   }
 };
 
-// Crear nuevo contenido
-const createContent = async (req, res) => {
-  const { title, type, status } = req.body;
+const createContent = async (req, res, next) => {
   try {
-    const result = await db.query(
-      `INSERT INTO contents (title, type, status, created_at)
-       VALUES ($1, $2, $3, NOW()) RETURNING *`,
-      [title, type, status]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error('Error al crear contenido:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    const content = await ContentService.createContent(req.body);
+    res.status(201).json(content);
+  } catch (err) {
+    next(err);
   }
 };
 
-// Editar contenido
-const updateContent = async (req, res) => {
-  const { id } = req.params;
-  const { title, type, status } = req.body;
+const updateContent = async (req, res, next) => {
   try {
-    await db.query(
-      `UPDATE contents
-       SET title = $1, type = $2, status = $3
-       WHERE id = $4`,
-      [title, type, status, id]
-    );
-    res.json({ message: 'Contenido actualizado correctamente' });
-  } catch (error) {
-    console.error('Error al actualizar contenido:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    const updated = await ContentService.updateContent(req.params.id, req.body);
+    if (updated) res.json({ message: 'Content updated' });
+    else res.status(404).json({ error: 'Not found' });
+  } catch (err) {
+    next(err);
   }
 };
 
-// Eliminar contenido
-const deleteContent = async (req, res) => {
-  const { id } = req.params;
+const deleteContent = async (req, res, next) => {
   try {
-    await db.query(`DELETE FROM contents WHERE id = $1`, [id]);
-    res.json({ message: 'Contenido eliminado correctamente' });
-  } catch (error) {
-    console.error('Error al eliminar contenido:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    await ContentService.deleteContent(req.params.id);
+    res.json({ message: 'Content deleted' });
+  } catch (err) {
+    next(err);
   }
 };
 
