@@ -1,43 +1,44 @@
-import 'api_service.dart';
+import 'dart:convert';
+import 'package:frontend_admin/services/api_client.dart';
 
 class ModerationService {
-  final ApiService api;
+  /// Obtiene todos los reportes pendientes
+  static Future<List<Map<String, dynamic>>> getPendingReports() async {
+    final response = await ApiClient.get('/moderation/reports');
 
-  ModerationService(this.api);
-
-  /// Obtener todos los reportes de contenido (videos, audios, historias)
-  Future<List<dynamic>> fetchReportedContent() async {
-    return await api.get('/admin/moderation/reported-content');
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al cargar reportes: ${response.body}');
+    }
   }
 
-  /// Obtener todos los comentarios reportados
-  Future<List<dynamic>> fetchReportedComments() async {
-    return await api.get('/admin/moderation/reported-comments');
+  /// Aprueba el contenido reportado
+  static Future<void> approveReport(String reportId) async {
+    final response = await ApiClient.post('/moderation/$reportId/approve', {});
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al aprobar reporte: ${response.body}');
+    }
   }
 
-  /// Aprobar contenido reportado (ignorar el reporte)
-  Future<void> approveReportedContent(String contentId) async {
-    await api.put('/admin/moderation/content/$contentId/approve', {});
+  /// Elimina el contenido reportado
+  static Future<void> deleteReportedContent(String reportId) async {
+    final response = await ApiClient.post('/moderation/$reportId/delete', {});
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar contenido reportado: ${response.body}');
+    }
   }
 
-  /// Eliminar contenido reportado (eliminarlo de la plataforma)
-  Future<void> removeReportedContent(String contentId) async {
-    await api.delete('/admin/moderation/content/$contentId');
-  }
+  /// Ignora un reporte
+  static Future<void> ignoreReport(String reportId) async {
+    final response = await ApiClient.post('/moderation/$reportId/ignore', {});
 
-  /// Aprobar comentario reportado (ignorar el reporte)
-  Future<void> approveReportedComment(String commentId) async {
-    await api.put('/admin/moderation/comment/$commentId/approve', {});
-  }
-
-  /// Eliminar comentario reportado
-  Future<void> removeReportedComment(String commentId) async {
-    await api.delete('/admin/moderation/comment/$commentId');
-  }
-
-  /// Obtener detalle de un reporte específico (opcional)
-  Future<Map<String, dynamic>> fetchReportDetails(String reportId) async {
-    return await api.get('/admin/moderation/report/$reportId');
+    if (response.statusCode != 200) {
+      throw Exception('Error al ignorar reporte: ${response.body}');
+    }
   }
 }
 
