@@ -29,6 +29,11 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
+
+  "scripts": {
+  "sync-db": "node scripts/syncModels.js",
+  ...
+    } 
   }
 }
 
