@@ -1,1 +1,83 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const db = require('../config/db');
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/env');
+
+// Generar token JWT
+function generateToken(user) {
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN || '1d' }
+  );
+}
+
+const authController = {
+  register: async (req, res) => {
+    try {
+      const { email, password, name } = req.body;
+
+      const existingUser = await db.oneOrNone('SELECT * FROM users WHERE email = $1', [email]);
+      if (existingUser) {
+        return res.status(400).json({ error: 'El usuario ya existe' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await db.one(
+        `INSERT INTO users (email, password, name, role)
+         VALUES ($1, $2, $3, 'user')
+         RETURNING id, email, name, role`,
+        [email, hashedPassword, name]
+      );
+
+      const token = generateToken(newUser);
+      res.json({ token, user: newUser });
+
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  login: async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const user = await db.oneOrNone('SELECT * FROM users WHERE email = $1', [email]);
+      if (!user) {
+        return res.status(401).json({ error: 'Credenciales inválidas' });
+      }
+
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) {
+        return res.status(401).json({ error: 'Credenciales inválidas' });
+      }
+
+      const { password: _, ...userWithoutPassword } = user;
+      const token = generateToken(userWithoutPassword);
+      res.json({ token, user: userWithoutPassword });
+
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+    }
+  },
+
+  verifyToken: async (req, res) => {
+    try {
+      const authHeader = req.headers['authorization'];
+      if (!authHeader) return res.status(401).json({ error: 'Token no proporcionado' });
+
+      const token = authHeader.split(' ')[1];
+      const decoded = jwt.verify(token, JWT_SECRET);
+      res.json({ valid: true, user: decoded });
+
+    } catch (error) {
+      console.error('Token inválido:', error);
+      res.status(401).json({ valid: false, error: 'Token inválido o expirado' });
+    }
+  }
+};
+
+module.exports = authController;
 
