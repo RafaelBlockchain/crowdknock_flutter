@@ -13,6 +13,15 @@ class UserModel {
     required this.role,
   });
 
+  Map<String, dynamic> toJson() {
+  return {
+    'name': name,
+    'email': email,
+    'role': role,
+    // otros campos que tu backend espera
+  };
+}
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'].toString(),
