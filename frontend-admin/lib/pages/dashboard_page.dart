@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../layout/admin_scaffold.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
-  // 🔧 Datos simulados. Reemplazar con datos reales desde el backend.
+  // 🔧 Datos simulados. Reemplazar con datos reales del backend.
   final int totalUsers = 1287;
   final int totalReports = 145;
   final int totalChallenges = 312;
@@ -12,23 +13,20 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: const _Sidebar(),
-      appBar: AppBar(
-        title: const Text('📊 CrowdKnock Dashboard'),
-        backgroundColor: Colors.indigo,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+    return AdminScaffold(
+      title: '📊 Dashboard',
+      currentRoute: '/dashboard',
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
             const Text(
-              'Welcome to Admin Panel',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+              'Welcome to the Admin Dashboard',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             const Text(
-              'Here you can monitor metrics, activity and content moderation.',
+              'From here you can manage users, content, moderation tasks, system metrics, and more.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 24),
@@ -67,12 +65,12 @@ class DashboardPage extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // 📈 Placeholder for chart
             const Text(
-              'User Activity (Monthly)',
+              '📈 User Activity (Monthly)',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
+
             SizedBox(
               height: 250,
               child: LineChart(
@@ -107,7 +105,7 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
-// 🔢 Summary card widget
+// 🔢 Widget de tarjeta resumen
 class _DashboardCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -161,92 +159,3 @@ class _DashboardCard extends StatelessWidget {
     );
   }
 }
-
-// 🧭 Sidebar widget compartido
-class _Sidebar extends StatelessWidget {
-  const _Sidebar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: const [
-          Text(
-            'CrowdKnock Admin',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.indigo,
-            ),
-          ),
-          SizedBox(height: 20),
-          _SidebarItem(title: 'Dashboard', route: '/dashboard', isActive: true),
-          _SidebarItem(title: 'Users', route: '/manage-users'),
-          _SidebarItem(title: 'Payments', route: '/payments'),
-          _SidebarItem(title: 'Settings', route: '/settings'),
-        ],
-      ),
-    );
-  }
-}
-
-class _SidebarItem extends StatelessWidget {
-  final String title;
-  final String route;
-  final bool isActive;
-
-  const _SidebarItem({
-    required this.title,
-    required this.route,
-    this.isActive = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      tileColor: isActive ? Colors.indigo[500] : null,
-      textColor: isActive ? Colors.white : null,
-      onTap: () {
-        if (!isActive) {
-          Navigator.pushNamed(context, route);
-        } else {
-          Navigator.pop(context);
-        }
-      },
-    );
-  }
-}
-import 'package:flutter/material.dart';
-import '../layout/admin_scaffold.dart';
-
-class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AdminScaffold(
-      title: '📊 Dashboard',
-      currentRoute: '/dashboard',
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              'Welcome to the Admin Dashboard',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 12),
-            Text(
-              'From here you can manage users, content, moderation tasks, system metrics, and more.',
-              style: TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
