@@ -206,3 +206,73 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     );
   }
 }
+import 'package:flutter/material.dart';
+import '../layout/admin_scaffold.dart';
+import '../services/user_service.dart';
+
+class ManageUsersScreen extends StatefulWidget {
+  const ManageUsersScreen({super.key});
+
+  @override
+  State<ManageUsersScreen> createState() => _ManageUsersScreenState();
+}
+
+class _ManageUsersScreenState extends State<ManageUsersScreen> {
+  late Future<List<Map<String, dynamic>>> _usersFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _usersFuture = UserService.getUsers();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AdminScaffold(
+      title: '👥 Manage Users',
+      currentRoute: '/users',
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _usersFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('❌ Error: ${snapshot.error}'));
+            }
+
+            final users = snapshot.data!;
+            if (users.isEmpty) {
+              return const Center(child: Text('No users found.'));
+            }
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text('ID')),
+                  DataColumn(label: Text('Name')),
+                  DataColumn(label: Text('Email')),
+                  DataColumn(label: Text('Role')),
+                  DataColumn(label: Text('Status')),
+                ],
+                rows: users.map((user) {
+                  return DataRow(cells: [
+                    DataCell(Text(user['id'].toString())),
+                    DataCell(Text(user['name'] ?? '')),
+                    DataCell(Text(user['email'] ?? '')),
+                    DataCell(Text(user['role'] ?? '')),
+                    DataCell(Text(user['status'] ?? '')),
+                  ]);
+                }).toList(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
