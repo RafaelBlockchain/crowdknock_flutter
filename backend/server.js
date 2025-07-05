@@ -1,4 +1,6 @@
 // backend/server.js
+import systemRoutes from './src/routes/system.routes.js';
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -39,8 +41,6 @@ const startServer = async () => {
 
 startServer();
 
-
-
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
@@ -57,6 +57,7 @@ app.use('/api/challenges', authMiddleware, challengesRoutes);
 app.use('/api/reports', authMiddleware, reportsRoutes);
 app.use('/api/payments', authMiddleware, paymentsRoutes);
 app.use('/api/settings', authMiddleware, settingsRoutes);
+app.use('/api/system', systemRoutes);
 
 // Ejemplo de ruta protegida solo para admins
 // app.use('/api/admin', authMiddleware, roleMiddleware('admin'), adminRoutes);
