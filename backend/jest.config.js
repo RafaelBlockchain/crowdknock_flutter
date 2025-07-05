@@ -1,9 +1,12 @@
 // jest.config.js
 
 module.exports = {
+  globalSetup: './jest.global-setup.js',
+  setupFilesAfterEnv: ['./jest.setup.js'],
   testEnvironment: 'node',
+  testTimeout: 30000,
   verbose: true,
-  testMatch: ['**/tests/**/*.test.js'], // Tests ubicados en /tests
+  testMatch: ['**/tests/**/*.test.js'], // Ubicación de los tests
   collectCoverage: true,
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
@@ -15,5 +18,4 @@ module.exports = {
     '!**/tests/**'
   ],
   coverageReporters: ['text', 'lcov'],
-  setupFilesAfterEnv: ['./jest.setup.js'],
 };
