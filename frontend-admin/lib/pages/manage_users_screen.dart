@@ -1,5 +1,3 @@
-// frontend-admin/lib/pages/manage_users_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:crowdknock_admin/widgets/admin_scaffold.dart';
 import '../widgets/users/user_filters.dart';
@@ -20,6 +18,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   void _onSearchChanged(String value) {
     setState(() {
       _searchQuery = value;
+    });
+  }
+
+  void _onClearSearch() {
+    setState(() {
+      _searchQuery = '';
     });
   }
 
@@ -45,9 +49,18 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: UserSearchBar(onChanged: _onSearchChanged)),
+                Expanded(
+                  child: UserSearchBar(
+                    searchQuery: _searchQuery,
+                    onChanged: _onSearchChanged,
+                    onClear: _onClearSearch,
+                  ),
+                ),
                 const SizedBox(width: 16),
-                UserFilters(onRoleChanged: _onRoleChanged),
+                UserFilters(
+                  selectedRole: _selectedRole,
+                  onRoleChanged: _onRoleChanged,
+                ),
               ],
             ),
             const SizedBox(height: 16),
