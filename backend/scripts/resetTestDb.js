@@ -1,35 +1,44 @@
 const { exec } = require('child_process');
-require('dotenv').config({ path: '.env.test' });
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.test') });
 
-const { DB_HOST, DB_PORT, DB_USER, DB_NAME } = process.env;
+const {
+  DB_USER,
+  DB_PASSWORD,
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+} = process.env;
 
-const psqlCmd = (script) =>
-  `psql -h ${DB_HOST} -p ${DB_PORT} -U ${DB_USER} -d ${DB_NAME} -f scripts/${script}`;
+const runSQLFile = (filePath) => {
+  return new Promise((resolve, reject) => {
+    const command = `psql -U ${DB_USER} -h ${DB_HOST} -p ${DB_PORT} -d ${DB_NAME} -f "${filePath}"`;
+    const env = { ...process.env, PGPASSWORD: DB_PASSWORD };
 
-const reset = async () => {
-  console.log('🔄 Reiniciando base de datos de pruebas...');
-
-  const init = exec(psqlCmd('init.sql'), { env: process.env });
-  init.stdout.pipe(process.stdout);
-  init.stderr.pipe(process.stderr);
-
-  init.on('exit', (code) => {
-    if (code === 0) {
-      const seed = exec(psqlCmd('seed.sql'), { env: process.env });
-      seed.stdout.pipe(process.stdout);
-      seed.stderr.pipe(process.stderr);
-
-      seed.on('exit', (code2) => {
-        if (code2 === 0) {
-          console.log('✅ Base de datos de pruebas reiniciada.');
-        } else {
-          console.error('❌ Error al ejecutar seed.sql');
-        }
-      });
-    } else {
-      console.error('❌ Error al ejecutar init.sql');
-    }
+    exec(command, { env }, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`❌ Error ejecutando ${filePath}:\n${stderr}`);
+        reject(error);
+      } else {
+        console.log(`✅ Ejecutado correctamente: ${filePath}`);
+        resolve(stdout);
+      }
+    });
   });
 };
 
-reset();
+(async () => {
+  try {
+    const initPath = path.resolve(__dirname, 'init.sql');
+    const seedPath = path.resolve(__dirname, 'seed.sql');
+
+    console.log('🔄 Reiniciando base de datos de prueba...');
+    await runSQLFile(initPath);
+    await runSQLFile(seedPath);
+
+    console.log('🎉 Base de datos de prueba reiniciada con éxito.');
+  } catch (err) {
+    console.error('🚨 Falló la restauración de la base de datos de prueba:', err);
+    process.exit(1);
+  }
+})();
