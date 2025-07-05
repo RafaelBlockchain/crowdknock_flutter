@@ -13,6 +13,19 @@ import 'package:frontend_app/features/users/ui/manage_users_screen.dart';
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  import 'package:frontend_app/core/middleware/auth_guard.dart';
+
+// Dentro de routes:
+'/dashboard': (_) => const AuthGuard(child: DashboardScreen()),
+'/content': (_) => const AuthGuard(child: ManageContentScreen()),
+'/moderation': (_) => const AuthGuard(child: ModerationScreen()),
+'/reports': (_) => const AuthGuard(child: ReportsScreen()),
+'/metrics': (_) => const AuthGuard(child: AppMetricsScreen()),
+'/payments': (_) => const AuthGuard(child: PaymentsScreen()),
+'/users': (_) => const AuthGuard(child: ManageUsersScreen()),
+
+
+  
   @override
   Widget build(BuildContext context) {
     final baseApiUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000';
