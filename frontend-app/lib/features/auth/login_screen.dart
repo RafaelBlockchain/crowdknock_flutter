@@ -58,6 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  final auth = Provider.of<AuthProvider>(context, listen: false);
+  if (auth.isAuthenticated) {
+    Future.microtask(() => Navigator.pushReplacementNamed(context, '/dashboard'));
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
