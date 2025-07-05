@@ -12,6 +12,8 @@ import 'package:frontend_app/features/users/ui/manage_users_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_app/core/providers/auth_provider.dart';
 
+'/profile': (context) => const ProfileScreen(),
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
