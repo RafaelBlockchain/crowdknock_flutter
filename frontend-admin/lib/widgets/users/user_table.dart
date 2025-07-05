@@ -14,6 +14,18 @@ class UserTable extends StatelessWidget {
     required this.selectedRole,
   });
 
+  onPressed: () {
+  showDialog(
+    context: context,
+    builder: (_) => EditUserDialog(
+      user: user,
+      onUserUpdated: _fetchUsers,
+    ),
+  );
+}
+
+  
+
   DataRow(
   cells: [
     DataCell(Text(user.name)),
