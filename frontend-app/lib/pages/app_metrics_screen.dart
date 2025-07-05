@@ -39,4 +39,3 @@ class AppMetricsScreen extends StatelessWidget {
     );
   }
 }
-
