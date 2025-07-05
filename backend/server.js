@@ -1,53 +1,45 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const helmet = require('helmet');
-
-const app = express();
+const { connectDB } = require('./src/config/db');
 
 // Cargar variables de entorno
 dotenv.config();
 
-// Middlewares globales
+// Inicializar app
+const app = express();
+
+// Middleware global
 app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Conexión a la base de datos
-const db = require('./src/config/db');
+// Conectar a la base de datos
+connectDB();
 
-// Probar conexión
-db.connect()
-  .then(() => console.log('✅ Conexión a PostgreSQL establecida.'))
-  .catch((err) => console.error('❌ Error de conexión a PostgreSQL:', err));
+// Rutas protegidas
+app.use('/api/auth', require('./src/routes/authRoutes'));
+app.use('/api/users', require('./src/routes/usersRoutes'));
+app.use('/api/metrics', require('./src/routes/metricsRoutes'));
+app.use('/api/moderation', require('./src/routes/moderationRoutes'));
+app.use('/api/content', require('./src/routes/contentRoutes'));
+app.use('/api/challenges', require('./src/routes/challengesRoutes'));
+app.use('/api/reports', require('./src/routes/reportsRoutes'));
+app.use('/api/payments', require('./src/routes/payments.routes'));
+app.use('/api/settings', require('./src/routes/settings.routes'));
 
-// Importar rutas
-const authRoutes = require('./src/routes/authRoutes');
-const usersRoutes = require('./src/routes/usersRoutes');
-const metricsRoutes = require('./src/routes/metricsRoutes');
-const moderationRoutes = require('./src/routes/moderationRoutes');
-const contentRoutes = require('./src/routes/contentRoutes');
-const challengesRoutes = require('./src/routes/challengesRoutes');
-const reportsRoutes = require('./src/routes/reportsRoutes');
-
-// Prefijo común para API
-app.use('/api/auth', authRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/metrics', metricsRoutes);
-app.use('/api/moderation', moderationRoutes);
-app.use('/api/content', contentRoutes);
-app.use('/api/challenges', challengesRoutes);
-app.use('/api/reports', reportsRoutes);
-
-// Ruta de prueba
+// Ruta raíz
 app.get('/', (req, res) => {
-  res.send('🚀 API de CrowdKnock Admin funcionando.');
+  res.send('CrowdKnock API is running 🚀');
 });
 
-// Puerto del servidor
+// Puerto
 const PORT = process.env.PORT || 4000;
+
+// Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor backend escuchando en http://localhost:${PORT}`);
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });
