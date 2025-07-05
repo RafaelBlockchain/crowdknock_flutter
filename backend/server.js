@@ -20,6 +20,27 @@ const errorHandler = require('./src/middlewares/errorHandler');
 
 const app = express();
 
+// En backend/server.js
+const { connectToDB, sequelize } = require('./src/config/db');
+const models = require('./src/models'); // importa los modelos antes de sync
+
+const startServer = async () => {
+  await connectToDB();
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('🔁 Sincronizando modelos en entorno de desarrollo...');
+    await sequelize.sync({ alter: true });
+  }
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  });
+};
+
+startServer();
+
+
+
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
