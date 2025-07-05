@@ -1,31 +1,53 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const morgan = require('morgan');
-
-const config = require('./src/config/env');
-const db = require('./src/config/db');
+const helmet = require('helmet');
 
 const app = express();
 
-// Middleware
+// Cargar variables de entorno
+dotenv.config();
+
+// Middlewares globales
 app.use(cors());
-app.use(express.json());
+app.use(helmet());
 app.use(morgan('dev'));
+app.use(express.json());
 
-// Verificar conexión a la base de datos
+// Conexión a la base de datos
+const db = require('./src/config/db');
+
+// Probar conexión
 db.connect()
-  .then(() => console.log('✅ Base de datos conectada'))
-  .catch((err) => {
-    console.error('❌ Error conectando a la base de datos:', err);
-    process.exit(1);
-  });
+  .then(() => console.log('✅ Conexión a PostgreSQL establecida.'))
+  .catch((err) => console.error('❌ Error de conexión a PostgreSQL:', err));
 
-// Rutas base (temporalmente vacías)
+// Importar rutas
+const authRoutes = require('./src/routes/authRoutes');
+const usersRoutes = require('./src/routes/usersRoutes');
+const metricsRoutes = require('./src/routes/metricsRoutes');
+const moderationRoutes = require('./src/routes/moderationRoutes');
+const contentRoutes = require('./src/routes/contentRoutes');
+const challengesRoutes = require('./src/routes/challengesRoutes');
+const reportsRoutes = require('./src/routes/reportsRoutes');
+
+// Prefijo común para API
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/metrics', metricsRoutes);
+app.use('/api/moderation', moderationRoutes);
+app.use('/api/content', contentRoutes);
+app.use('/api/challenges', challengesRoutes);
+app.use('/api/reports', reportsRoutes);
+
+// Ruta de prueba
 app.get('/', (req, res) => {
-  res.send('CrowdKnock Backend corriendo');
+  res.send('🚀 API de CrowdKnock Admin funcionando.');
 });
 
-// Iniciar servidor
-app.listen(config.port, () => {
-  console.log(`🚀 Servidor escuchando en http://localhost:${config.port}`);
+// Puerto del servidor
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor backend escuchando en http://localhost:${PORT}`);
 });
