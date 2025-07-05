@@ -1,7 +1,10 @@
+// frontend-admin/lib/pages/manage_users_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:crowdknock_admin/widgets/admin_scaffold.dart';
-import 'widgets/user_table.dart';
-import 'widgets/user_search_bar.dart';
+import '../widgets/users/user_filters.dart';
+import '../widgets/users/user_table.dart';
+import '../widgets/users/user_search_bar.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   const ManageUsersScreen({super.key});
@@ -12,10 +15,17 @@ class ManageUsersScreen extends StatefulWidget {
 
 class _ManageUsersScreenState extends State<ManageUsersScreen> {
   String _searchQuery = '';
+  String _selectedRole = 'all';
 
   void _onSearchChanged(String value) {
     setState(() {
       _searchQuery = value;
+    });
+  }
+
+  void _onRoleChanged(String? role) {
+    setState(() {
+      _selectedRole = role ?? 'all';
     });
   }
 
@@ -33,10 +43,19 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            UserSearchBar(onChanged: _onSearchChanged), // 🔍 Search bar
+            Row(
+              children: [
+                Expanded(child: UserSearchBar(onChanged: _onSearchChanged)),
+                const SizedBox(width: 16),
+                UserFilters(onRoleChanged: _onRoleChanged),
+              ],
+            ),
             const SizedBox(height: 16),
             Expanded(
-              child: UserTable(searchQuery: _searchQuery), // 🧾 Tabla de usuarios
+              child: UserTable(
+                searchQuery: _searchQuery,
+                selectedRole: _selectedRole,
+              ),
             ),
           ],
         ),
