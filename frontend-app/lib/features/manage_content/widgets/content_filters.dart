@@ -1,62 +1,68 @@
 import 'package:flutter/material.dart';
 
-class ContentFilters extends StatelessWidget {
-  final String selectedType;
-  final String selectedStatus;
-  final void Function(String, String) onFilterChanged;
+class ContentFilters extends StatefulWidget {
+  final Function(String type, String status) onFilterChanged;
 
   const ContentFilters({
     super.key,
-    required this.selectedType,
-    required this.selectedStatus,
     required this.onFilterChanged,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final types = ['Todos', 'Video', 'Audio', 'Texto'];
-    final statuses = ['Todos', 'Publicado', 'Pendiente', 'Rechazado'];
+  State<ContentFilters> createState() => _ContentFiltersState();
+}
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Wrap(
-        spacing: 16,
-        runSpacing: 8,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          DropdownButton<String>(
-            value: selectedType,
-            onChanged: (value) {
-              if (value != null) {
-                onFilterChanged(value, selectedStatus);
-              }
-            },
-            items: types.map((type) {
-              return DropdownMenuItem<String>(
-                value: type,
-                child: Text(type),
-              );
-            }).toList(),
-            hint: const Text('Tipo'),
-          ),
-          DropdownButton<String>(
-            value: selectedStatus,
-            onChanged: (value) {
-              if (value != null) {
-                onFilterChanged(selectedType, value);
-              }
-            },
-            items: statuses.map((status) {
-              return DropdownMenuItem<String>(
-                value: status,
-                child: Text(status),
-              );
-            }).toList(),
-            hint: const Text('Estado'),
-          ),
-        ],
-      ),
+class _ContentFiltersState extends State<ContentFilters> {
+  String _selectedType = 'Todos';
+  String _selectedStatus = 'Todos';
+
+  final List<String> _types = ['Todos', 'Video', 'Audio', 'Historia'];
+  final List<String> _statuses = ['Todos', 'Publicado', 'Pendiente', 'Rechazado'];
+
+  void _applyFilters() {
+    widget.onFilterChanged(
+      _selectedType == 'Todos' ? '' : _selectedType.toLowerCase(),
+      _selectedStatus == 'Todos' ? '' : _selectedStatus.toLowerCase(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        DropdownButton<String>(
+          value: _selectedType,
+          onChanged: (value) {
+            setState(() {
+              _selectedType = value!;
+            });
+            _applyFilters();
+          },
+          items: _types.map((type) {
+            return DropdownMenuItem(
+              value: type,
+              child: Text(type),
+            );
+          }).toList(),
+        ),
+        DropdownButton<String>(
+          value: _selectedStatus,
+          onChanged: (value) {
+            setState(() {
+              _selectedStatus = value!;
+            });
+            _applyFilters();
+          },
+          items: _statuses.map((status) {
+            return DropdownMenuItem(
+              value: status,
+              child: Text(status),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }
-
