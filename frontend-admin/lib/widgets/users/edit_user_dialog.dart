@@ -1,99 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_admin/models/user_model.dart';
+import 'package:frontend_admin/services/user_service.dart';
+import 'package:frontend_admin/core/widgets/primary_button.dart';
 
 class EditUserDialog extends StatefulWidget {
-  final Map<String, dynamic> user;
-  final void Function(Map<String, dynamic> updatedUser) onSave;
+  final UserModel user;
+  final VoidCallback onUserUpdated;
 
-  const EditUserDialog({
-    super.key,
-    required this.user,
-    required this.onSave,
-  });
+  const EditUserDialog({super.key, required this.user, required this.onUserUpdated});
 
   @override
   State<EditUserDialog> createState() => _EditUserDialogState();
 }
 
 class _EditUserDialogState extends State<EditUserDialog> {
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  String _role = 'user';
-  bool _active = true;
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  String role = 'user';
+
+  bool isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.user['name']);
-    _emailController = TextEditingController(text: widget.user['email']);
-    _role = widget.user['role'] ?? 'user';
-    _active = widget.user['active'] ?? true;
+    nameController = TextEditingController(text: widget.user.name);
+    emailController = TextEditingController(text: widget.user.email);
+    role = widget.user.role;
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    super.dispose();
-  }
+  Future<void> _submitUpdate() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  void _submit() {
-    final updatedUser = {
-      ...widget.user,
-      'name': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'role': _role,
-      'active': _active,
-    };
+    setState(() => isSubmitting = true);
 
-    widget.onSave(updatedUser);
-    Navigator.of(context).pop();
+    final updatedUser = widget.user.copyWith(
+      name: nameController.text.trim(),
+      email: emailController.text.trim(),
+      role: role,
+    );
+
+    try {
+      await UserService.updateUser(updatedUser);
+      widget.onUserUpdated();
+      Navigator.of(context).pop();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al actualizar usuario: $e')),
+      );
+    } finally {
+      setState(() => isSubmitting = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Editar Usuario'),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Nombre'),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Correo'),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _role,
-              decoration: const InputDecoration(labelText: 'Rol'),
-              items: const [
-                DropdownMenuItem(value: 'user', child: Text('Usuario')),
-                DropdownMenuItem(value: 'moderator', child: Text('Moderador')),
-                DropdownMenuItem(value: 'admin', child: Text('Administrador')),
-              ],
-              onChanged: (value) => setState(() => _role = value ?? 'user'),
-            ),
-            const SizedBox(height: 8),
-            SwitchListTile(
-              title: const Text('Activo'),
-              value: _active,
-              onChanged: (value) => setState(() => _active = value),
-            ),
-          ],
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Nombre'),
+                validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+              ),
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                validator: (value) => value == null || !value.contains('@') ? 'Email inválido' : null,
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: role,
+                decoration: const InputDecoration(labelText: 'Rol'),
+                items: const [
+                  DropdownMenuItem(value: 'user', child: Text('Usuario')),
+                  DropdownMenuItem(value: 'admin', child: Text('Administrador')),
+                  DropdownMenuItem(value: 'moderator', child: Text('Moderador')),
+                ],
+                onChanged: (value) => setState(() => role = value ?? 'user'),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
-        TextButton(
-          child: const Text('Cancelar'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        ElevatedButton(
-          child: const Text('Guardar'),
-          onPressed: _submit,
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancelar')),
+        PrimaryButton(
+          text: 'Guardar Cambios',
+          onPressed: isSubmitting ? null : _submitUpdate,
         ),
       ],
     );
