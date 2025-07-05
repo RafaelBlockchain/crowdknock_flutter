@@ -72,6 +72,17 @@ static Future<void> updateUser(String userId, Map<String, dynamic> updatedData) 
     }
   }
 
+  static Future<void> deleteUser(String id) async {
+  final response = await http.delete(
+    Uri.parse('$_baseUrl/$id'),
+    headers: {'Content-Type': 'application/json'},
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Error al eliminar el usuario');
+  }
+}
+
   /// Simulación de recuperación de token (deberías usar tu lógica real aquí)
   static Future<String> _getToken() async {
     // TODO: Reemplaza por tu lógica real para recuperar el JWT (ej: SharedPreferences)
