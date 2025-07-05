@@ -9,6 +9,8 @@ import 'package:frontend_app/features/reports/ui/reports_screen.dart';
 import 'package:frontend_app/features/metrics/ui/app_metrics_screen.dart';
 import 'package:frontend_app/features/payments/ui/payments_screen.dart';
 import 'package:frontend_app/features/users/ui/manage_users_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend_app/core/providers/auth_provider.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -24,7 +26,22 @@ class MyApp extends StatelessWidget {
 '/payments': (_) => const AuthGuard(child: PaymentsScreen()),
 '/users': (_) => const AuthGuard(child: ManageUsersScreen()),
 
-
+AppBar(
+  title: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      const Text('Panel de Administración'),
+      Consumer<AuthProvider>(
+        builder: (_, auth, __) {
+          final user = auth.currentUser;
+          return user != null
+              ? Text('👋 Hola, ${user.name}', style: const TextStyle(fontSize: 14))
+              : const SizedBox.shrink();
+        },
+      ),
+    ],
+  ),
+)
   
   @override
   Widget build(BuildContext context) {
