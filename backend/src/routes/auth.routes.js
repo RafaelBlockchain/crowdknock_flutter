@@ -5,6 +5,16 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('../config/db');
 const { verifyToken } = require('../middleware/auth');
+const authController = require('../controllers/auth.controller');
+
+
+// Rutas públicas para autenticación y registro
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+
+// Ruta para verificar token JWT (opcional)
+router.get('/verify-token', authController.verifyToken);
+
 
 // Login de usuario
 router.post('/login', async (req, res) => {
