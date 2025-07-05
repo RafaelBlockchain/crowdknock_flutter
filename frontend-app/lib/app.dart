@@ -27,6 +27,12 @@ class MyApp extends StatelessWidget {
         path: '/dashboard',
         builder: (context, state) => const DashboardScreen(),
       ),
+
+      GoRoute(
+  path: '/register',
+  builder: (_, __) => const RegisterScreen(),
+),
+
     ],
   );
 
