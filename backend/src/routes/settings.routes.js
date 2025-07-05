@@ -1,6 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const settingsController = require('../controllers/settings.controller');
 const authMiddleware = require('../middleware/auth');
+
+
+// Proteger todas las rutas con JWT
+router.use(authMiddleware.verifyToken);
+
+// GET /settings → Obtener todas las configuraciones
+router.get('/', settingsController.getAllSettings);
+
+// PUT /settings/:key → Actualizar configuración por clave
+router.put('/:key', settingsController.updateSetting);
+
 
 // Controlador simulado de configuración
 const settingsController = {
