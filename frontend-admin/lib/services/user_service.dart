@@ -1,69 +1,35 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend_admin/services/api_client.dart';
 
 class UserService {
-  static const String _baseUrl = 'https://your-backend-url.com/api';
-  static const _storage = FlutterSecureStorage();
-
-  /// Obtiene el token JWT almacenado
-  static Future<String?> _getToken() async {
-    return await _storage.read(key: 'jwt_token');
-  }
-
-  /// Obtiene todos los usuarios desde el backend
-  static Future<List<Map<String, dynamic>>> fetchUsers() async {
-    final token = await _getToken();
-    final response = await http.get(
-      Uri.parse('$_baseUrl/users'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  /// Obtiene todos los usuarios del backend
+  static Future<List<Map<String, dynamic>>> getAllUsers() async {
+    final response = await ApiClient.get('/users');
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      final List data = jsonDecode(response.body);
       return data.cast<Map<String, dynamic>>();
     } else {
-      throw Exception('Failed to load users');
+      throw Exception('Error al cargar usuarios: ${response.body}');
     }
   }
 
-  /// Edita un usuario (PUT /users/:id)
-  static Future<bool> updateUser({
-    required String id,
-    required String name,
-    required String role,
-  }) async {
-    final token = await _getToken();
-    final response = await http.put(
-      Uri.parse('$_baseUrl/users/$id'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'name': name,
-        'role': role,
-      }),
-    );
+  /// Actualiza la información de un usuario por ID
+  static Future<void> updateUser(String id, Map<String, dynamic> updates) async {
+    final response = await ApiClient.put('/users/$id', updates);
 
-    return response.statusCode == 200;
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar usuario: ${response.body}');
+    }
   }
 
-  /// Banea un usuario (PATCH /users/:id/ban)
-  static Future<bool> banUser(String id) async {
-    final token = await _getToken();
-    final response = await http.patch(
-      Uri.parse('$_baseUrl/users/$id/ban'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  /// Banea a un usuario por ID
+  static Future<void> banUser(String id) async {
+    final response = await ApiClient.post('/users/$id/ban', {});
 
-    return response.statusCode == 200;
+    if (response.statusCode != 200) {
+      throw Exception('Error al banear usuario: ${response.body}');
+    }
   }
 }
 
