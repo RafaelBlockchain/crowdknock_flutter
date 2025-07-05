@@ -1,62 +1,51 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend_admin/services/api_client.dart';
 
 class MetricsService {
-  final String baseUrl;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  /// Obtiene métricas generales de la app
+  static Future<Map<String, dynamic>> getAppMetrics() async {
+    final response = await ApiClient.get('/metrics/app');
 
-  MetricsService({required this.baseUrl});
-
-  Future<String?> _getToken() async {
-    return await _storage.read(key: 'jwt_token');
-  }
-
-  Future<Map<String, dynamic>?> getAppMetrics() async {
-    try {
-      final token = await _getToken();
-      final response = await http.get(
-        Uri.parse('$baseUrl/metrics/app'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        debugPrint('Error al obtener métricas: ${response.body}');
-        return null;
-      }
-    } catch (e) {
-      debugPrint('Excepción en getAppMetrics: $e');
-      return null;
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('Error al obtener métricas de la app: ${response.body}');
     }
   }
 
-  Future<List<dynamic>> getCrashReports() async {
-    try {
-      final token = await _getToken();
-      final response = await http.get(
-        Uri.parse('$baseUrl/metrics/crashes'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+  /// Obtiene datos para los gráficos de usuarios activos por día
+  static Future<List<Map<String, dynamic>>> getDailyActiveUsers() async {
+    final response = await ApiClient.get('/metrics/daily-active-users');
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        debugPrint('Error al obtener crash reports: ${response.body}');
-        return [];
-      }
-    } catch (e) {
-      debugPrint('Excepción en getCrashReports: $e');
-      return [];
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al obtener usuarios activos diarios: ${response.body}');
+    }
+  }
+
+  /// Obtiene el tiempo promedio de sesión por día
+  static Future<List<Map<String, dynamic>>> getSessionDurations() async {
+    final response = await ApiClient.get('/metrics/session-duration');
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al obtener duración de sesión: ${response.body}');
+    }
+  }
+
+  /// Obtiene cantidad de errores reportados (crashes, excepciones)
+  static Future<List<Map<String, dynamic>>> getCrashReports() async {
+    final response = await ApiClient.get('/metrics/crash-reports');
+
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al obtener reportes de fallos: ${response.body}');
     }
   }
 }
-
