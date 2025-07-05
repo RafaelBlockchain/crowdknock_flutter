@@ -14,6 +14,11 @@ void main() {
   runApp(const CrowdKnockAdminApp());
 }
 
+void main() {
+  ApiClient.setToken('tu_jwt_temporal_aqui');
+  runApp(const MyApp());
+}
+
 class CrowdKnockAdminApp extends StatelessWidget {
   const CrowdKnockAdminApp({super.key});
 
