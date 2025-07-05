@@ -1,36 +1,31 @@
 // backend/src/middlewares/authMiddleware.js
 
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = process.env;
 
-dotenv.config();
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-const authenticateToken = (req, res, next) => {
-  // El token JWT se espera en el header Authorization: Bearer <token>
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Acceso denegado: token no proporcionado' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, error: 'Token no proporcionado' });
   }
+
+  const token = authHeader.split(' ')[1];
 
   try {
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new Error('JWT_SECRET no está definido en .env');
-    }
-
-    // Verificar token
-    const decoded = jwt.verify(token, secret);
-
-    // Guardar datos del usuario decodificados para uso en rutas protegidas
-    req.user = decoded;
-
+    const decoded = jwt.verify(token, JWT_SECRET);
+    // Aquí asignamos la info del usuario al request para usar en otros middlewares o rutas
+    req.user = {
+      id: decoded.id,
+      name: decoded.name,
+      role: decoded.role,
+      email: decoded.email,
+    };
     next();
-  } catch (err) {
-    return res.status(403).json({ message: 'Token inválido o expirado' });
+  } catch (error) {
+    return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
   }
-};
+}
 
-export default authenticateToken;
+module.exports = authMiddleware;
 
