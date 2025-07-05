@@ -254,3 +254,73 @@ const TextStyle _headerStyle = TextStyle(
   fontSize: 14,
   fontWeight: FontWeight.w600,
 );
+import 'package:flutter/material.dart';
+import '../layout/admin_scaffold.dart';
+import '../services/payment_service.dart';
+
+class PaymentsPage extends StatefulWidget {
+  const PaymentsPage({super.key});
+
+  @override
+  State<PaymentsPage> createState() => _PaymentsPageState();
+}
+
+class _PaymentsPageState extends State<PaymentsPage> {
+  late Future<List<Map<String, dynamic>>> _paymentsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _paymentsFuture = PaymentService.getPayments();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AdminScaffold(
+      title: '💰 Payments',
+      currentRoute: '/payments',
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: _paymentsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text('❌ Error: ${snapshot.error}'));
+            }
+
+            final payments = snapshot.data!;
+            if (payments.isEmpty) {
+              return const Center(child: Text('No payments found.'));
+            }
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columns: const [
+                  DataColumn(label: Text('ID')),
+                  DataColumn(label: Text('User')),
+                  DataColumn(label: Text('Amount')),
+                  DataColumn(label: Text('Date')),
+                  DataColumn(label: Text('Status')),
+                ],
+                rows: payments.map((payment) {
+                  return DataRow(cells: [
+                    DataCell(Text(payment['id'].toString())),
+                    DataCell(Text(payment['user'] ?? 'N/A')),
+                    DataCell(Text('\$${payment['amount']}')),
+                    DataCell(Text(payment['date'] ?? '')),
+                    DataCell(Text(payment['status'] ?? '')),
+                  ]);
+                }).toList(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
