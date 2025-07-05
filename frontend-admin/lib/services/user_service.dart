@@ -1,34 +1,25 @@
+// frontend-admin/lib/services/user_service.dart
+
 import 'dart:convert';
-import 'package:frontend_admin/services/api_client.dart';
+import 'package:http/http.dart' as http;
+import '../models/user_model.dart';
 
 class UserService {
-  /// Obtiene todos los usuarios del backend
-  static Future<List<Map<String, dynamic>>> getAllUsers() async {
-    final response = await ApiClient.get('/users');
+  final String baseUrl;
+
+  UserService({required this.baseUrl});
+
+  Future<List<UserModel>> getAllUsers() async {
+    final response = await http.get(Uri.parse('$baseUrl/users'), headers: {
+      'Authorization': 'Bearer YOUR_TOKEN_HERE',
+      'Content-Type': 'application/json',
+    });
 
     if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => UserModel.fromJson(json)).toList();
     } else {
-      throw Exception('Error al cargar usuarios: ${response.body}');
-    }
-  }
-
-  /// Actualiza la información de un usuario por ID
-  static Future<void> updateUser(String id, Map<String, dynamic> updates) async {
-    final response = await ApiClient.put('/users/$id', updates);
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al actualizar usuario: ${response.body}');
-    }
-  }
-
-  /// Banea a un usuario por ID
-  static Future<void> banUser(String id) async {
-    final response = await ApiClient.post('/users/$id/ban', {});
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al banear usuario: ${response.body}');
+      throw Exception('Error al obtener usuarios');
     }
   }
 }
