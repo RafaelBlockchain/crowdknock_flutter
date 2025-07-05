@@ -30,6 +30,8 @@
   "test:full": "npm run test:create-db && npm run test:db-reset && npm test"
 }
 
+  {
+
   "keywords": [
     "express",
     "api",
