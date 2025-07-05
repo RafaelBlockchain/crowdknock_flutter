@@ -1,10 +1,10 @@
-// frontend-admin/lib/widgets/users/user_table.dart
-
 import 'package:flutter/material.dart';
 import '../../models/user_model.dart';
 import '../../services/user_service.dart';
+import 'edit_user_dialog.dart';
+import 'delete_user_dialog.dart';
 
-class UserTable extends StatelessWidget {
+class UserTable extends StatefulWidget {
   final String searchQuery;
   final String selectedRole;
 
@@ -14,92 +14,104 @@ class UserTable extends StatelessWidget {
     required this.selectedRole,
   });
 
-  onPressed: () {
-  showDialog(
-    context: context,
-    builder: (_) => EditUserDialog(
-      user: user,
-      onUserUpdated: _fetchUsers,
-    ),
-  );
+  @override
+  State<UserTable> createState() => _UserTableState();
 }
 
-  
+class _UserTableState extends State<UserTable> {
+  late final UserService userService;
+  List<UserModel> users = [];
+  bool isLoading = true;
 
-  DataRow(
-  cells: [
-    DataCell(Text(user.name)),
-    DataCell(Text(user.email)),
-    DataCell(Row(
-      children: [
-        IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () => _showEditDialog(user),
-        ),
-        IconButton(
-          icon: Icon(Icons.delete),
-          color: Colors.red,
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => DeleteUserDialog(
-                user: user,
-                onUserDeleted: _fetchUsers, // <-- refresca la tabla después
-              ),
-            );
-          },
-        ),
-      ],
-    )),
-  ],
-)
+  @override
+  void initState() {
+    super.initState();
+    userService = UserService(baseUrl: 'http://localhost:3000'); // Reemplaza según entorno
+    _fetchUsers();
+  }
 
+  Future<void> _fetchUsers() async {
+    try {
+      final data = await userService.getAllUsers();
+      setState(() {
+        users = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error fetching users: $e');
+    }
+  }
 
-  
+  void _showEditDialog(UserModel user) {
+    showDialog(
+      context: context,
+      builder: (_) => EditUserDialog(
+        user: user,
+        onUserUpdated: _fetchUsers,
+      ),
+    );
+  }
+
+  void _showDeleteDialog(UserModel user) {
+    showDialog(
+      context: context,
+      builder: (_) => DeleteUserDialog(
+        user: user,
+        onUserDeleted: _fetchUsers,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userService = UserService(baseUrl: 'http://localhost:3000'); // reemplaza por tu base real
+    final filteredUsers = users.where((user) {
+      final matchesSearch = user.name.toLowerCase().contains(widget.searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().contains(widget.searchQuery.toLowerCase());
+      final matchesRole = widget.selectedRole == 'all' || user.role == widget.selectedRole;
+      return matchesSearch && matchesRole;
+    }).toList();
 
-    return FutureBuilder<List<UserModel>>(
-      future: userService.getAllUsers(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-
-        final filteredUsers = snapshot.data!.where((user) {
-          final matchesSearch = user.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              user.email.toLowerCase().contains(searchQuery.toLowerCase());
-          final matchesRole = selectedRole == 'all' || user.role == selectedRole;
-          return matchesSearch && matchesRole;
-        }).toList();
-
-        return Card(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Nombre')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Rol')),
-              ],
-              rows: filteredUsers.map((user) {
-                return DataRow(cells: [
-                  DataCell(Text(user.id)),
-                  DataCell(Text(user.name)),
-                  DataCell(Text(user.email)),
-                  DataCell(Text(user.role)),
-                ]);
-              }).toList(),
-            ),
-          ),
-        );
-      },
+    return Card(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('ID')),
+            DataColumn(label: Text('Nombre')),
+            DataColumn(label: Text('Email')),
+            DataColumn(label: Text('Rol')),
+            DataColumn(label: Text('Acciones')),
+          ],
+          rows: filteredUsers.map((user) {
+            return DataRow(cells: [
+              DataCell(Text(user.id)),
+              DataCell(Text(user.name)),
+              DataCell(Text(user.email)),
+              DataCell(Text(user.role)),
+              DataCell(Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => _showEditDialog(user),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    color: Colors.red,
+                    onPressed: () => _showDeleteDialog(user),
+                  ),
+                ],
+              )),
+            ]);
+          }).toList(),
+        ),
+      ),
     );
   }
 }
