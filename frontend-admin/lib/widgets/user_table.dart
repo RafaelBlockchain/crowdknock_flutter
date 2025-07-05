@@ -10,6 +10,20 @@ class UserTable extends StatelessWidget {
     required this.selectedRole,
   });
 
+showDialog(
+  context: context,
+  builder: (_) => DeleteUserDialog(
+    userName: userData['name'],
+    onConfirm: () async {
+      // Aquí llamas a tu UserService.deleteUser(userData['id'])
+      await UserService.deleteUser(userData['id']);
+      // Luego actualizas la UI o recargas los usuarios
+    },
+  ),
+);
+
+
+  
   @override
   Widget build(BuildContext context) {
     final users = [
