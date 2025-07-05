@@ -1,3 +1,4 @@
+// backend/src/controllers/auth.controller.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
@@ -17,9 +18,13 @@ const authController = {
     try {
       const { email, password, name } = req.body;
 
+      if (!email || !password || !name) {
+        return res.status(400).json({ error: 'Nombre, email y contraseña son requeridos' });
+      }
+
       const existingUser = await db.oneOrNone('SELECT * FROM users WHERE email = $1', [email]);
       if (existingUser) {
-        return res.status(400).json({ error: 'El usuario ya existe' });
+        return res.status(409).json({ error: 'El usuario ya existe' });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -31,7 +36,7 @@ const authController = {
       );
 
       const token = generateToken(newUser);
-      res.json({ token, user: newUser });
+      res.status(201).json({ token, user: newUser });
 
     } catch (error) {
       console.error('Error al registrar usuario:', error);
@@ -43,6 +48,10 @@ const authController = {
     try {
       const { email, password } = req.body;
 
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email y contraseña son requeridos' });
+      }
+
       const user = await db.oneOrNone('SELECT * FROM users WHERE email = $1', [email]);
       if (!user) {
         return res.status(401).json({ error: 'Credenciales inválidas' });
@@ -53,6 +62,7 @@ const authController = {
         return res.status(401).json({ error: 'Credenciales inválidas' });
       }
 
+      // Excluir password antes de enviar datos al cliente
       const { password: _, ...userWithoutPassword } = user;
       const token = generateToken(userWithoutPassword);
       res.json({ token, user: userWithoutPassword });
