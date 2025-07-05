@@ -203,4 +203,35 @@ class _SidebarItem extends StatelessWidget {
     );
   }
 }
+import 'package:flutter/material.dart';
+import '../layout/admin_scaffold.dart';
+
+class ModerationPage extends StatelessWidget {
+  const ModerationPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AdminScaffold(
+      title: '🛡️ Moderation',
+      currentRoute: '/moderation',
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              'Moderation Center',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'Review and take action on reported content or users.',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
