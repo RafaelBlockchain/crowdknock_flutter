@@ -1,163 +1,80 @@
 import 'package:flutter/material.dart';
-import '../services/system_status_service.dart';
+import '../layout/admin_scaffold.dart';
 
-class SystemStatusPage extends StatefulWidget {
+class SystemStatusPage extends StatelessWidget {
   const SystemStatusPage({super.key});
 
   @override
-  State<SystemStatusPage> createState() => _SystemStatusPageState();
-}
-
-class _SystemStatusPageState extends State<SystemStatusPage> {
-  // Servicio para consultar el estado del sistema
-  final systemService = SystemStatusService(baseUrl: 'https://tu-servidor.com');
-
-  late Future<List<SystemComponentStatus>> futureStatus;
-
-  @override
-  void initState() {
-    super.initState();
-    futureStatus = systemService.fetchSystemStatus();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('🛠️ System Status'),
-        backgroundColor: Colors.indigo,
-      ),
-      body: Padding(
+    return AdminScaffold(
+      title: '🖥️ System Status',
+      currentRoute: '/system-status',
+      child: Padding(
         padding: const EdgeInsets.all(16),
-        child: FutureBuilder<List<SystemComponentStatus>>(
-          future: futureStatus,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('❌ Error: \${snapshot.error}'),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No system status data available.'));
-            }
+        child: ListView(
+          children: [
+            const Text(
+              'System Health Overview',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Monitor the current status of backend services, database, storage, and queue systems.',
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 24),
 
-            final components = snapshot.data!;
-            return ListView.builder(
-              itemCount: components.length,
-              itemBuilder: (context, index) {
-                final component = components[index];
-                return Card(
-                  child: ListTile(
-                    leading: Icon(
-                      component.status ? Icons.check_circle : Icons.error,
-                      color: component.status ? Colors.green : Colors.red,
-                    ),
-                    title: Text(component.name),
-                    subtitle: Text('Last checked: \${component.lastChecked}'),
-                    trailing: Text(
-                      component.status ? 'Operational' : 'Down',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: component.status ? Colors.green : Colors.red,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
+            // 🔧 Servicios simulados - reemplazar con datos reales del backend
+            const _StatusCard(
+              service: 'Backend API',
+              status: 'Operational',
+              color: Colors.green,
+            ),
+            const _StatusCard(
+              service: 'PostgreSQL Database',
+              status: 'Operational',
+              color: Colors.green,
+            ),
+            const _StatusCard(
+              service: 'Media Storage (S3)',
+              status: 'Degraded Performance',
+              color: Colors.orange,
+            ),
+            const _StatusCard(
+              service: 'Notification Queue',
+              status: 'Offline',
+              color: Colors.red,
+            ),
+          ],
         ),
       ),
     );
   }
 }
-import 'package:flutter/material.dart';
-import '../layout/admin_scaffold.dart';
-import '../services/system_status_service.dart';
 
-class SystemStatusPage extends StatefulWidget {
-  const SystemStatusPage({super.key});
+// 🧩 Widget de estado individual
+class _StatusCard extends StatelessWidget {
+  final String service;
+  final String status;
+  final Color color;
 
-  @override
-  State<SystemStatusPage> createState() => _SystemStatusPageState();
-}
-
-class _SystemStatusPageState extends State<SystemStatusPage> {
-  late Future<Map<String, dynamic>> _statusFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _statusFuture = SystemStatusService.getSystemStatus();
-  }
+  const _StatusCard({
+    required this.service,
+    required this.status,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return AdminScaffold(
-      title: '💻 System Status',
-      currentRoute: '/system-status',
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: FutureBuilder<Map<String, dynamic>>(
-          future: _statusFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('❌ Error: ${snapshot.error}'));
-            }
-
-            final status = snapshot.data!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Current System Status',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                Card(
-                  child: ListTile(
-                    title: const Text('Database'),
-                    trailing: Text(
-                      status['database'] ?? 'Unknown',
-                      style: TextStyle(
-                        color: status['database'] == 'Online' ? Colors.green : Colors.red,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Card(
-                  child: ListTile(
-                    title: const Text('API Server'),
-                    trailing: Text(
-                      status['api'] ?? 'Unknown',
-                      style: TextStyle(
-                        color: status['api'] == 'Online' ? Colors.green : Colors.red,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Card(
-                  child: ListTile(
-                    title: const Text('Storage Service'),
-                    trailing: Text(
-                      status['storage'] ?? 'Unknown',
-                      style: TextStyle(
-                        color: status['storage'] == 'Online' ? Colors.green : Colors.red,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: CircleAvatar(backgroundColor: color, radius: 10),
+        title: Text(service),
+        subtitle: Text('Status: $status'),
+        trailing: Icon(Icons.info_outline, color: Colors.grey[600]),
       ),
     );
   }
