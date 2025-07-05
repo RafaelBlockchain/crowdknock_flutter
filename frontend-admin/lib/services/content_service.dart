@@ -1,45 +1,43 @@
-import 'api_service.dart';
+import 'dart:convert';
+import 'package:frontend_admin/services/api_client.dart';
 
 class ContentService {
-  final ApiService api;
+  /// Obtiene todos los contenidos (videos, audios, historias)
+  static Future<List<Map<String, dynamic>>> getAllContent() async {
+    final response = await ApiClient.get('/content');
 
-  ContentService(this.api);
-
-  /// Obtener todos los contenidos (videos, audios, historias)
-  Future<List<dynamic>> fetchAllContent() async {
-    return await api.get('/admin/content');
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al cargar contenidos: ${response.body}');
+    }
   }
 
-  /// Obtener contenido por tipo: video, audio, historia
-  Future<List<dynamic>> fetchContentByType(String type) async {
-    return await api.get('/admin/content/type/$type');
+  /// Sube un nuevo contenido
+  static Future<void> uploadContent(Map<String, dynamic> newContent) async {
+    final response = await ApiClient.post('/content', newContent);
+
+    if (response.statusCode != 201) {
+      throw Exception('Error al subir contenido: ${response.body}');
+    }
   }
 
-  /// Aprobar contenido (PUT)
-  Future<void> approveContent(String contentId) async {
-    await api.put('/admin/content/$contentId/approve', {});
+  /// Edita metadatos del contenido
+  static Future<void> updateContent(String id, Map<String, dynamic> updates) async {
+    final response = await ApiClient.put('/content/$id', updates);
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar contenido: ${response.body}');
+    }
   }
 
-  /// Rechazar contenido (PUT)
-  Future<void> rejectContent(String contentId, {String reason = ''}) async {
-    await api.put('/admin/content/$contentId/reject', {
-      'reason': reason,
-    });
-  }
+  /// Elimina contenido por ID
+  static Future<void> deleteContent(String id) async {
+    final response = await ApiClient.delete('/content/$id');
 
-  /// Eliminar contenido (DELETE)
-  Future<void> deleteContent(String contentId) async {
-    await api.delete('/admin/content/$contentId');
-  }
-
-  /// Obtener detalles de un contenido específico
-  Future<Map<String, dynamic>> getContentDetails(String contentId) async {
-    return await api.get('/admin/content/$contentId');
-  }
-
-  /// Agregar nuevo contenido manualmente (opcional)
-  Future<void> createContent(Map<String, dynamic> newContent) async {
-    await api.post('/admin/content', newContent);
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar contenido: ${response.body}');
+    }
   }
 }
-
