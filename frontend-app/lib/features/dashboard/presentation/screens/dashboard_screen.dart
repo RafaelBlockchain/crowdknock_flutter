@@ -56,6 +56,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  {
+  "userCount": 120,
+  "contentCount": 58,
+  "reportCount": 12,
+  "challengeCount": 8
+}
+
+
+  
   Widget _buildStatCard(String label, String count) {
     return Card(
       elevation: 4,
