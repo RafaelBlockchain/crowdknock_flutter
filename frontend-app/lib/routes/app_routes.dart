@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/login_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 
+'/login': (context) => const LoginScreen(),
+
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/login',
