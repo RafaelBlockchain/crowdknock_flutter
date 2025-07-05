@@ -6,6 +6,39 @@ import '../models/user_model.dart';
 class UserService {
   static final String baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:3000/api';
 
+  /// Crea un nuevo usuario
+static Future<void> createUser(UserModel user) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/users'),
+    headers: {
+      'Authorization': 'Bearer ${await _getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(user.toJson()),
+  );
+
+  if (response.statusCode != 201) {
+    throw Exception('Error al crear el usuario: ${response.body}');
+  }
+}
+
+/// Actualiza un usuario existente por su ID
+static Future<void> updateUser(String userId, Map<String, dynamic> updatedData) async {
+  final response = await http.put(
+    Uri.parse('$baseUrl/users/$userId'),
+    headers: {
+      'Authorization': 'Bearer ${await _getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(updatedData),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Error al actualizar el usuario: ${response.body}');
+  }
+}
+
+
   /// Obtiene todos los usuarios del backend
   static Future<List<UserModel>> getAllUsers() async {
     final response = await http.get(
