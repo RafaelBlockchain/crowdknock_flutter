@@ -18,7 +18,12 @@
   "test:watch": "jest --watch",
   "test:coverage": "jest --coverage"
 }
-  
+
+  "scripts": {
+  "test": "cross-env NODE_ENV=test jest --runInBand",
+  "test:db-reset": "node scripts/resetTestDb.js"
+}
+
   "keywords": [
     "express",
     "api",
