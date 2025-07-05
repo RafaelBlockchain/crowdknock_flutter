@@ -29,6 +29,18 @@ class _EditUserDialogState extends State<EditUserDialog> {
     role = widget.user.role;
   }
 
+  static Future<void> updateUser(UserModel user) async {
+  final response = await http.put(
+    Uri.parse('$_baseUrl/${user.id}'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(user.toJson()),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Error al actualizar el usuario');
+  }
+}
+
   Future<void> _submitUpdate() async {
     if (!_formKey.currentState!.validate()) return;
 
