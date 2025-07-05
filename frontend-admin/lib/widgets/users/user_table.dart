@@ -14,6 +14,36 @@ class UserTable extends StatelessWidget {
     required this.selectedRole,
   });
 
+  DataRow(
+  cells: [
+    DataCell(Text(user.name)),
+    DataCell(Text(user.email)),
+    DataCell(Row(
+      children: [
+        IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () => _showEditDialog(user),
+        ),
+        IconButton(
+          icon: Icon(Icons.delete),
+          color: Colors.red,
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => DeleteUserDialog(
+                user: user,
+                onUserDeleted: _fetchUsers, // <-- refresca la tabla después
+              ),
+            );
+          },
+        ),
+      ],
+    )),
+  ],
+)
+
+
+  
   @override
   Widget build(BuildContext context) {
     final userService = UserService(baseUrl: 'http://localhost:3000'); // reemplaza por tu base real
