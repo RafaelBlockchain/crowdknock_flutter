@@ -1,56 +1,37 @@
-const db = require('../config/db');
+// backend/src/controllers/user.controller.js
+const UserService = require('../services/UserService');
 
-// Obtener todos los usuarios
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
-    const result = await db.query('SELECT id, name, email, role, banned FROM users ORDER BY created_at DESC');
-    res.json(result.rows);
+    const users = await UserService.getAllUsers();
+    res.json(users);
   } catch (err) {
-    console.error('Error al obtener usuarios:', err);
-    res.status(500).json({ message: 'Error del servidor' });
+    next(err);
   }
 };
 
-// Actualizar nombre y rol de un usuario
-exports.updateUser = async (req, res) => {
-  const userId = req.params.id;
-  const { name, role } = req.body;
-
+const updateUser = async (req, res, next) => {
   try {
-    const result = await db.query(
-      'UPDATE users SET name = $1, role = $2 WHERE id = $3 RETURNING *',
-      [name, role, userId]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    res.json(result.rows[0]);
+    const updated = await UserService.updateUser(req.params.id, req.body);
+    if (updated) res.json({ message: 'User updated successfully' });
+    else res.status(404).json({ error: 'User not found' });
   } catch (err) {
-    console.error('Error al actualizar usuario:', err);
-    res.status(500).json({ message: 'Error del servidor' });
+    next(err);
   }
 };
 
-// Banear a un usuario
-exports.banUser = async (req, res) => {
-  const userId = req.params.id;
-
+const banUser = async (req, res, next) => {
   try {
-    const result = await db.query(
-      'UPDATE users SET banned = true WHERE id = $1 RETURNING *',
-      [userId]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    res.json({ message: 'Usuario baneado exitosamente' });
+    await UserService.banUser(req.params.id);
+    res.json({ message: 'User banned successfully' });
   } catch (err) {
-    console.error('Error al banear usuario:', err);
-    res.status(500).json({ message: 'Error del servidor' });
+    next(err);
   }
+};
+
+module.exports = {
+  getAllUsers,
+  updateUser,
+  banUser,
 };
 
