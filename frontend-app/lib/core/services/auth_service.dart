@@ -2,6 +2,33 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:frontend_app/core/utils/api_client.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+class AuthService {
+  static const _storage = FlutterSecureStorage();
+
+  static Future<bool> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await ApiClient.post('/auth/register', {
+        'name': name,
+        'email': email,
+        'password': password,
+      });
+
+      return response.statusCode == 201;
+    } catch (e) {
+      print('Register error: $e');
+      return false;
+    }
+  }
+
+  // Puedes agregar aquí login, logout, isLoggedIn, etc.
+}
 
 class AuthService {
   static Future<bool> login(String email, String password) async {
