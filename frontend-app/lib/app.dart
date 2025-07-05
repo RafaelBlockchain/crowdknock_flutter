@@ -1,48 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'core/services/auth_service.dart';
-import 'features/auth/login_screen.dart';
-import 'features/dashboard/dashboard_screen.dart'; // Crea pronto
+import 'package:frontend_app/features/auth/ui/login_screen.dart';
+import 'package:frontend_app/features/auth/ui/register_screen.dart';
+import 'package:frontend_app/features/dashboard/ui/dashboard_screen.dart';
+import 'package:frontend_app/features/manage_content/ui/manage_content_screen.dart';
+import 'package:frontend_app/features/moderation/ui/moderation_screen.dart';
+import 'package:frontend_app/features/reports/ui/reports_screen.dart';
+import 'package:frontend_app/features/metrics/ui/app_metrics_screen.dart';
+import 'package:frontend_app/features/payments/ui/payments_screen.dart';
+import 'package:frontend_app/features/users/ui/manage_users_screen.dart';
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  final GoRouter _router = GoRouter(
-    initialLocation: '/',
-    redirect: (context, state) async {
-      final loggedIn = await AuthService.isLoggedIn();
-      final loggingIn = state.subloc == '/login';
-
-      if (!loggedIn && !loggingIn) return '/login';
-      if (loggedIn && loggingIn) return '/dashboard';
-      return null;
-    },
-    routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/dashboard',
-        builder: (context, state) => const DashboardScreen(),
-      ),
-
-      GoRoute(
-  path: '/register',
-  builder: (_, __) => const RegisterScreen(),
-),
-
-    ],
-  );
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    final baseApiUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:3000';
+
+    return MaterialApp(
+      title: 'CrowdKnock Admin',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.grey[100],
+      ),
       debugShowCheckedModeBanner: false,
-      routerConfig: _router,
-      title: 'CrowdKnock',
-      theme: ThemeData.light(useMaterial3: true),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
+        '/content': (context) => const ManageContentScreen(),
+        '/moderation': (context) => const ModerationScreen(),
+        '/reports': (context) => const ReportsScreen(),
+        '/metrics': (context) => const AppMetricsScreen(),
+        '/payments': (context) => const PaymentsScreen(),
+        '/users': (context) => const ManageUsersScreen(),
+      },
     );
   }
 }
