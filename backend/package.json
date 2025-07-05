@@ -33,6 +33,14 @@
   "scripts": {
   "sync-db": "node scripts/syncModels.js",
   ...
+
+  "scripts": {
+  "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
+},
+"jest": {
+  "testEnvironment": "node",
+  "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"]
+      }
     } 
   }
 }
