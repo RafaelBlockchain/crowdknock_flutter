@@ -1,49 +1,38 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:frontend_admin/services/api_client.dart';
 
-/// Modelo para representar el estado de un componente del sistema
-class SystemComponentStatus {
-  final String name;
-  final bool status;
-  final String lastChecked;
-
-  SystemComponentStatus({
-    required this.name,
-    required this.status,
-    required this.lastChecked,
-  });
-
-  factory SystemComponentStatus.fromJson(Map<String, dynamic> json) {
-    return SystemComponentStatus(
-      name: json['name'],
-      status: json['status'],
-      lastChecked: json['lastChecked'],
-    );
-  }
-}
-
-/// Servicio para obtener el estado del sistema desde el backend
 class SystemStatusService {
-  final String baseUrl;
+  /// Obtiene el estado general del sistema
+  static Future<Map<String, dynamic>> getSystemHealth() async {
+    final response = await ApiClient.get('/status/health');
 
-  SystemStatusService({required this.baseUrl});
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('Error al obtener estado del sistema: ${response.body}');
+    }
+  }
 
-  Future<List<SystemComponentStatus>> fetchSystemStatus() async {
-    final uri = Uri.parse('$baseUrl/api/system-status');
+  /// Verifica estado de servicios internos (base de datos, colas, cache, etc.)
+  static Future<List<Map<String, dynamic>>> getServiceStatuses() async {
+    final response = await ApiClient.get('/status/services');
 
-    try {
-      final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      final List data = jsonDecode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      throw Exception('Error al obtener estado de servicios: ${response.body}');
+    }
+  }
 
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonList = json.decode(response.body);
-        return jsonList
-            .map((item) => SystemComponentStatus.fromJson(item))
-            .toList();
-      } else {
-        throw Exception('Error al obtener el estado del sistema: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error al conectar con el servidor: $e');
+  /// Verifica estado de uso de recursos del servidor
+  static Future<Map<String, dynamic>> getServerMetrics() async {
+    final response = await ApiClient.get('/status/server-metrics');
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    } else {
+      throw Exception('Error al obtener métricas del servidor: ${response.body}');
     }
   }
 }
