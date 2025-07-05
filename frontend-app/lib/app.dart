@@ -75,6 +75,15 @@ AppBar(
               value: 'logout',
               child: Text('Cerrar sesión 🔓'),
             ),
+           PopupMenuItem(
+              value: 'profile',
+              child: Text('Mi perfil'),
+          ),
+               if (value == 'profile') {
+  Navigator.pushNamed(context, '/profile');
+}
+ 
+        
           ],
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
