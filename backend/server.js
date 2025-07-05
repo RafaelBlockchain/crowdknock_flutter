@@ -4,6 +4,12 @@ const helmet = require('helmet');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const { connectDB } = require('./src/config/db');
+const errorHandler = require('./middlewares/errorHandler');
+
+// ... otras configuraciones y rutas
+
+app.use(errorHandler);
+
 
 // Cargar variables de entorno
 dotenv.config();
