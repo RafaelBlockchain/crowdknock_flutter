@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const app = express();
 
 const authRoutes = require('./src/routes/auth.routes');
 const usersRoutes = require('./src/routes/users.routes');
@@ -33,6 +34,11 @@ const startServer = async () => {
     console.log('🔁 Sincronizando modelos en entorno de desarrollo...');
     await sequelize.sync({ alter: true });
   }
+
+  if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
 
   app.listen(PORT, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
