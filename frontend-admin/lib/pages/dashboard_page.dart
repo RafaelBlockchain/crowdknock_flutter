@@ -218,4 +218,35 @@ class _SidebarItem extends StatelessWidget {
     );
   }
 }
+import 'package:flutter/material.dart';
+import '../layout/admin_scaffold.dart';
+
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AdminScaffold(
+      title: '📊 Dashboard',
+      currentRoute: '/dashboard',
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              'Welcome to the Admin Dashboard',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'From here you can manage users, content, moderation tasks, system metrics, and more.',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
