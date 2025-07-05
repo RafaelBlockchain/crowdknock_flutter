@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_app/core/services/auth_service.dart';
-import 'package:frontend_app/core/widgets/custom_text_field.dart';
-import 'package:frontend_app/core/widgets/custom_button.dart';
+import 'package:frontend_app/core/widgets/loading_indicator.dart';
+import 'package:frontend_app/core/widgets/primary_button.dart';
+import 'package:frontend_app/data/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -12,82 +12,128 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  bool _isLoading = false;
+  bool isLoading = false;
+  bool isSubmitting = false;
+  String? errorMessage;
 
-  Future<void> _register() async {
+  @override
+  void initState() {
+    super.initState();
+    _simulateScreenLoad();
+  }
+
+  void _simulateScreenLoad() async {
+    setState(() => isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 600));
+    setState(() => isLoading = false);
+  }
+
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    setState(() {
+      isSubmitting = true;
+      errorMessage = null;
+    });
 
-    final success = await AuthService.register(
-      name: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
-
-    setState(() => _isLoading = false);
-
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Registro exitoso. Inicie sesión.')),
+    try {
+      await AuthService.register(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-      Navigator.pushReplacementNamed(context, '/login');
-    } else {
+
+      // TODO: Navegar al dashboard o login luego del registro exitoso
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al registrar.')),
+        const SnackBar(content: Text('Registro exitoso')),
       );
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error al registrar: ${e.toString()}';
+      });
+    } finally {
+      setState(() => isSubmitting = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: LoadingIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Registro')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              CustomTextField(
-                controller: _nameController,
-                label: 'Nombre completo',
-                validator: (value) =>
-                    value!.isEmpty ? 'Nombre requerido' : null,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _emailController,
-                label: 'Correo electrónico',
-                validator: (value) =>
-                    value!.isEmpty ? 'Correo requerido' : null,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _passwordController,
-                label: 'Contraseña',
-                obscureText: true,
-                validator: (value) =>
-                    value!.length < 6 ? 'Mínimo 6 caracteres' : null,
+              const Text(
+                'Crea tu cuenta',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : CustomButton(
-                      text: 'Registrarse',
-                      onPressed: _register,
-                    ),
+
+              // Nombre
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Nombre'),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Campo requerido' : null,
+              ),
+              const SizedBox(height: 16),
+
+              // Email
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Correo electrónico'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Campo requerido';
+                  if (!value.contains('@')) return 'Correo inválido';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Contraseña
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Contraseña'),
+                obscureText: true,
+                validator: (value) =>
+                    value == null || value.length < 6 ? 'Mínimo 6 caracteres' : null,
+              ),
+              const SizedBox(height: 24),
+
+              if (errorMessage != null)
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+
+              PrimaryButton(
+                label: 'Registrarse',
+                onPressed: _handleRegister,
+                isLoading: isSubmitting,
+              ),
+
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
+                  // TODO: Navegar a pantalla de login
                 },
                 child: const Text('¿Ya tienes cuenta? Inicia sesión'),
-              )
+              ),
             ],
           ),
         ),
@@ -95,4 +141,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
- 
