@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_app/features/reports/widgets/report_table.dart';
+
+// CORE
 import 'package:frontend_app/core/widgets/admin_scaffold.dart';
+
+// FEATURES - REPORTS
 import 'package:frontend_app/features/reports/models/report_model.dart';
 import 'package:frontend_app/features/reports/services/reports_service.dart';
 
-class ReportsScreen extends StatelessWidget {
+class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
-  
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
 }
@@ -28,17 +30,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Reportes del Sistema')),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: ReportTable(),
-      ),
-    );
-  }
-  
   @override
   Widget build(BuildContext context) {
     return AdminScaffold(
@@ -85,7 +76,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                             onPressed: report.status == 'resuelto'
                                 ? null
                                 : () async {
-                                    await _reportsService.updateReportStatus(report.id, 'resuelto');
+                                    await _reportsService.updateReportStatus(
+                                        report.id, 'resuelto');
                                     _refreshReports();
                                   },
                           ),
@@ -97,14 +89,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text('Eliminar reporte'),
-                                  content: const Text('¿Estás seguro de eliminar este reporte?'),
+                                  content: const Text(
+                                      '¿Estás seguro de eliminar este reporte?'),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.pop(context, false),
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
                                       child: const Text('Cancelar'),
                                     ),
                                     TextButton(
-                                      onPressed: () => Navigator.pop(context, true),
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
                                       child: const Text('Eliminar'),
                                     ),
                                   ],
@@ -130,15 +125,3 @@ class _ReportsScreenState extends State<ReportsScreen> {
     );
   }
 }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Reportes del Sistema')),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: ReportTable(),
-      ),
-    );
-  }
-}
-
