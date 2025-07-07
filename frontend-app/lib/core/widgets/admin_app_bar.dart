@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_app/core/providers/auth_provider.dart';
-
+ 
 class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
 
