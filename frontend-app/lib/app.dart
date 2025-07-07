@@ -13,6 +13,7 @@ import 'package:frontend_app/features/profile/ui/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_app/core/providers/auth_provider.dart';
 import 'package:frontend_app/core/middleware/auth_guard.dart';
+import 'routes/app_routes.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -46,6 +47,21 @@ class MyApp extends StatelessWidget {
           '/users': (_) => const AuthGuard(child: ManageUsersScreen()),
           '/profile': (_) => const AuthGuard(child: ProfileScreen()),
         },
+      ),
+    );
+  }
+}
+@override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'CrowdKnock Admin',
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/dashboard',
+      routes: appRoutes,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.deepPurple,
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
       ),
     );
   }
