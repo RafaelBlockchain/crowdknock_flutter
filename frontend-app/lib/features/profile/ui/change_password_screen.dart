@@ -3,7 +3,7 @@ import 'package:frontend_app/core/widgets/custom_text_field.dart';
 import 'package:frontend_app/core/widgets/primary_button.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({super.key});
+  const ChangePasswordScreen({Key? key}) : super(key: key);
 
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
@@ -11,9 +11,9 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final currentPasswordController = TextEditingController();
-  final newPasswordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -21,45 +21,72 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2)); // Simulación
 
-    // TODO: Cambiar la contraseña vía API
+    // Simulación de espera por backend
+    await Future.delayed(const Duration(seconds: 2));
 
     setState(() => _isLoading = false);
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Contraseña actualizada')),
+      const SnackBar(content: Text('Contraseña actualizada exitosamente.')),
     );
-    Navigator.pop(context);
+
+    _currentPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
+  }
+
+  @override
+  void dispose() {
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cambiar contraseña')),
+      appBar: AppBar(
+        title: const Text('Cambiar Contraseña'),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black87,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               CustomTextField(
-                controller: currentPasswordController,
-                labelText: 'Contraseña actual',
-                obscureText: true,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: newPasswordController,
-                labelText: 'Nueva contraseña',
-                obscureText: true,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: confirmPasswordController,
-                labelText: 'Confirmar nueva contraseña',
+                controller: _currentPasswordController,
+                label: 'Contraseña Actual',
                 obscureText: true,
                 validator: (value) {
-                  if (value != newPasswordController.text) {
+                  if (value == null || value.isEmpty) {
+                    return 'Ingrese su contraseña actual';
+                  }
+                  return null;
+                },
+              ),
+              CustomTextField(
+                controller: _newPasswordController,
+                label: 'Nueva Contraseña',
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.length < 6) {
+                    return 'Debe tener al menos 6 caracteres';
+                  }
+                  return null;
+                },
+              ),
+              CustomTextField(
+                controller: _confirmPasswordController,
+                label: 'Confirmar Nueva Contraseña',
+                obscureText: true,
+                validator: (value) {
+                  if (value != _newPasswordController.text) {
                     return 'Las contraseñas no coinciden';
                   }
                   return null;
@@ -67,9 +94,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                label: 'Guardar cambios',
-                onPressed: _handleChangePassword,
+                label: 'Actualizar Contraseña',
                 isLoading: _isLoading,
+                onPressed: _handleChangePassword,
               ),
             ],
           ),
