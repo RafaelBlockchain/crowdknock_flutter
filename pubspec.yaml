@@ -1,1 +1,44 @@
+name: frontend_app
+description: Aplicación Flutter para la administración de CrowdKnock.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navegación y estado
+  provider: ^6.1.2
+
+  # Variables de entorno
+  flutter_dotenv: ^5.1.0
+
+  # UI moderna
+  cupertino_icons: ^1.0.6
+  flutter_svg: ^2.0.10
+  google_fonts: ^6.2.1
+
+  # HTTP y conexión
+  http: ^1.2.1
+
+  # Gráficos para métricas
+  fl_chart: ^0.66.2
+
+  # Seguridad / Autenticación
+  jwt_decoder: ^2.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - .env
 
