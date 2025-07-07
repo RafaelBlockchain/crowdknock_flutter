@@ -11,89 +11,65 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _currentPasswordController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final currentPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
-  String? _error;
 
   void _handleChangePassword() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_newPasswordController.text != _confirmPasswordController.text) {
-      setState(() => _error = 'Las contraseñas no coinciden');
-      return;
-    }
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(seconds: 2)); // Simulación
 
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    // TODO: Cambiar la contraseña vía API
 
-    try {
-      // TODO: Llamar a tu AuthService o endpoint para cambiar contraseña
-      await Future.delayed(const Duration(seconds: 2)); // Simulación
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contraseña actualizada correctamente')),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      setState(() => _error = 'Error al cambiar la contraseña');
-    } finally {
-      setState(() => _isLoading = false);
-    }
+    setState(() => _isLoading = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Contraseña actualizada')),
+    );
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cambiar Contraseña'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 1,
-      ),
+      appBar: AppBar(title: const Text('Cambiar contraseña')),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              if (_error != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(_error!, style: const TextStyle(color: Colors.red)),
-                ),
               CustomTextField(
-                controller: _currentPasswordController,
+                controller: currentPasswordController,
                 labelText: 'Contraseña actual',
                 obscureText: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Requerido' : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: _newPasswordController,
+                controller: newPasswordController,
                 labelText: 'Nueva contraseña',
                 obscureText: true,
-                validator: (value) =>
-                    value != null && value.length < 6 ? 'Mínimo 6 caracteres' : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
-                controller: _confirmPasswordController,
+                controller: confirmPasswordController,
                 labelText: 'Confirmar nueva contraseña',
                 obscureText: true,
-                validator: (value) =>
-                    value != null && value.length < 6 ? 'Mínimo 6 caracteres' : null,
+                validator: (value) {
+                  if (value != newPasswordController.text) {
+                    return 'Las contraseñas no coinciden';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 24),
               PrimaryButton(
-                text: _isLoading ? 'Guardando...' : 'Actualizar contraseña',
-                onPressed: _isLoading ? null : _handleChangePassword,
+                label: 'Guardar cambios',
+                onPressed: _handleChangePassword,
+                isLoading: _isLoading,
               ),
             ],
           ),
