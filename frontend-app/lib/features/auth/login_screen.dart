@@ -125,6 +125,12 @@ void didChangeDependencies() {
                 isLoading: isSubmitting,
               ),
 
+              PrimaryButton(
+                label: 'Iniciar sesión',
+                onPressed: _handleLogin,
+                isLoading: _isLoading,
+              ),
+
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
