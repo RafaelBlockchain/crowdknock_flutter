@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.crowdknock_flutter">
+    package="com.tuempresa.crowdknock_flutter">
 
-    <!-- Permisos -->
+    <!-- Permisos necesarios -->
     <uses-permission android:name="android.permission.INTERNET"/>
-    
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
-        android:label="CrowdKnock"
         android:name="${applicationName}"
+        android:label="CrowdKnock"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.CrowdKnock">
+        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
         
+        <!-- Entrada principal -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.CrowdKnock"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        
     </application>
 </manifest>
+
 
