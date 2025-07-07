@@ -1,0 +1,3 @@
+rootProject.name = 'crowdknock_flutter'
+
+include ':app'
