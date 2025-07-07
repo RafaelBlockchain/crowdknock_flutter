@@ -48,6 +48,14 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+PrimaryButton(
+  label: 'Cambiar contraseña',
+  icon: Icons.lock_reset,
+  onPressed: () {
+    Navigator.pushNamed(context, '/change-password');
+  },
+),
+  
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
