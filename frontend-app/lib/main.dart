@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:frontend_app/app.dart';
 import 'package:frontend_app/core/providers/auth_provider.dart';
 
+initialRoute: '/login',
+routes: appRoutes,
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
