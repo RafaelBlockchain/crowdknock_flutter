@@ -9,8 +9,6 @@ class DashboardScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        appBar: const AdminAppBar(title: 'Panel de Administración'),
-      body: Center(child: Text('Contenido del Dashboard')),
       body: Row(
         children: [
           // Sidebar
