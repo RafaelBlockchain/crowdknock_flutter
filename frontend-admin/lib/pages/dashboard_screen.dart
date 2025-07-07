@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_app/core/widgets/admin_app_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -8,6 +9,8 @@ class DashboardScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+        appBar: const AdminAppBar(title: 'Panel de Administración'),
+      body: Center(child: Text('Contenido del Dashboard')),
       body: Row(
         children: [
           // Sidebar
