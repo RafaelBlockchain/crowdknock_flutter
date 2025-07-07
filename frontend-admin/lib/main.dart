@@ -10,6 +10,8 @@ import 'pages/system_status_page.dart';
 import 'pages/app_metrics_page.dart';
 import 'pages/manage_users_page.dart';
 
+'/change-password': (_) => const AuthGuard(child: ChangePasswordScreen()),
+
 void main() {
   runApp(const CrowdKnockAdminApp());
 }
