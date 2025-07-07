@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+// Pantallas principales del admin panel
 import 'package:frontend_app/features/dashboard/ui/dashboard_screen.dart';
 import 'package:frontend_app/features/manage_content/ui/manage_content_screen.dart';
 import 'package:frontend_app/features/moderation/ui/moderation_screen.dart';
