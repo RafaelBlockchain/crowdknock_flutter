@@ -23,6 +23,7 @@ jobs:
 
       - name: Build Web
         run: flutter build web --base-href="/crowdknock-flutter/"
+             touch build/web/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
