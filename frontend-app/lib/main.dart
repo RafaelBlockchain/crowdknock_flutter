@@ -12,6 +12,12 @@ import 'pages/manage_users_page.dart';
 
 '/change-password': (_) => const AuthGuard(child: ChangePasswordScreen()),
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
+
+
 void main() {
   runApp(const CrowdKnockAdminApp());
 }
