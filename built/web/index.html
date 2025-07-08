@@ -1,1 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="description" content="CrowdKnock Flutter Web App">
+
+    <!-- Viewport para mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>CrowdKnock</title>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+
+    <!-- Flutter JS loader -->
+    <script src="flutter.js" defer></script>
+  </head>
+  <body>
+    <script>
+      window.addEventListener('load', function (ev) {
+        _flutter.loader.loadEntrypoint({
+          serviceWorker: {
+            serviceWorkerVersion: 'v1',
+          },
+          onEntrypointLoaded: function (engineInitializer) {
+            engineInitializer.initializeEngine().then(function (appRunner) {
+              appRunner.runApp();
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
 
