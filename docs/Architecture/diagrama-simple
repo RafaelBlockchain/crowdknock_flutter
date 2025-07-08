@@ -268,71 +268,98 @@ frontend-app/
 
 
 
-
-├── frontend-admin/                # Panel web Flutter para administradores
-│   ├── lib/
-│   │   ├── main.dart              # Entry point
-│   │   ├── app.dart               # Temas y rutas
-│   │   ├── core/                  # Shared widgets, layouts, helpers
-│   │   ├── pages/
-│   │   │   ├── dashboard_page.dart
-│   │   │   ├── manage_users_page.dart
-│   │   │   ├── manage_content_page.dart
-│   │   │   ├── moderation_page.dart
-│   │   │   ├── reports_page.dart
-│   │   │   ├── payments_page.dart ✅
-│   │   │   ├── feedback_page.dart
-│   │   │   └── settings_page.dart
-│   │   └── routes/
-│   ├── assets/
-│   └── test/
-
-├── docs/                          # Documentación técnica
-│   ├── API.md                     # Endpoints disponibles
-│   ├── ARCHITECTURE.md            # Esta estructura
-│   └── DEPLOYMENT.md              # Guía de despliegue
-
-├── README.md                      # Descripción general del proyecto
-└── LICENSE
-
-
-
-// DETALLADO DE:
-
-crowdknock_flutter/frontend-app/  
+frontend-admin/
+├── assets/
+│   ├── Images/
+│   │   └── logo.png
+│   └── icons/
+│       └── logo.png
 │
 ├── lib/
-│   ├── main.dart                     # Punto de entrada
-│   ├── app.dart                      # Configuración general (temas, rutas)
-│   ├── core/                         # Componentes compartidos
-│   │   ├── constants/                # Constantes globales (colores, strings, assets)
-│   │   ├── widgets/                  # Widgets reutilizables (botones, cards)
-│   │   ├── utils/                    # Funciones de ayuda (formatos, validaciones)
-│   │   └── services/                 # Servicios generales (API, auth, notificaciones)
+│   ├── main.dart                      # Punto de entrada
+│   ├── app.dart                       # Inicialización y configuración global (tema, rutas, etc.)
 │   │
-│   ├── config/                       # Configs específicas por entorno (dev/prod)
-│   │   └── env.dart
+│   ├── config/                        # Configuraciones generales (temas, constantes, rutas centralizadas)
+│   │   └── routes.dart                # Definición de rutas del panel admin
 │   │
-│   ├── data/                         # Acceso a datos
-│   │   ├── models/                   # Modelos (User, Challenge, Reporte, etc)
-│   │   ├── repositories/             # Lógica de obtención (API, local storage)
-│   │   └── providers/                # Providers (Firebase, REST, etc)
+│   ├── models/                        # Modelos de datos (User, Report, etc.)
+│   │   └── user_model.dart
 │   │
-│   ├── features/                     # Módulos del sistema (por dominio)
-│   │   ├── auth/                     # Login, registro, auth JWT
-│   │   ├── dashboard/                # Pantalla principal del usuario
-│   │   ├── challenges/               # Subir/ver desafíos (audio, video, minijuegos)
-│   │   ├── polls/                    # Crear/ver encuestas
-│   │   ├── reports/                  # Ver denuncias
-│   │   ├── admin_panel/              # Panel administrativo (analytics, users, etc)
-│   │   └── settings/                 # Ajustes de cuenta, tema, idioma
+│   ├── services/                      # Lógica de conexión al backend (API REST)
+│   │   ├── api_client.dart
+│   │   ├── api_service.dart
+│   │   ├── content_service.dart
+│   │   ├── dashboard_service.dart
+│   │   ├── metrics_service.dart
+│   │   ├── moderation_service.dart
+│   │   ├── payment_service.dart
+│   │   ├── system_status_service.dart
+│   │   └── user_service.dart
 │   │
-│   └── routes/                       # Sistema de navegación centralizado
-│       └── app_router.dart
+│   ├── widgets/                       # Widgets reutilizables
+│   │   ├── admin_navigation_drawer.dart
+│   │   ├── admin_scaffold.dart
+│   │   ├── admin_sidebar.dart
+│   │   ├── admin_text_field.dart
+│   │   ├── nav_button.dart
+│   │   ├── content/
+│   │   │   ├── content_filters.dart
+│   │   │   ├── content_moderation_table.dart
+│   │   │   ├── content_row_actions.dart
+│   │   │   ├── content_table.dart
+│   │   │   ├── edit_content_dialog.dart
+│   │   │   └── upload_content_dialog.dart
+│   │   ├── dashboard/
+│   │   │   ├── challenge_stats_card.dart
+│   │   │   ├── content_stats_card.dart
+│   │   │   ├── dashboard_grid.dart
+│   │   │   ├── mini_chart_card.dart
+│   │   │   ├── reports_overview_card.dart
+│   │   │   └── user_count_card.dart
+│   │   ├── moderation/
+│   │   │   ├── moderation_actions.dart
+│   │   │   ├── moderation_table.dart
+│   │   │   ├── reported_comment_card.dart
+│   │   │   └── reported_content_preview.dart
+│   │   ├── users/
+│   │   │   ├── create_user_dialog.dart
+│   │   │   ├── delete_user_dialog.dart
+│   │   │   ├── edit_user_dialog.dart
+│   │   │   ├── user_filters.dart
+│   │   │   ├── user_search_bar.dart
+│   │   │   └── user_table.dart
+│   │   └── reports_table.dart
 │
-├── assets/                          # Imágenes, iconos, fuentes
+│   ├── features/                      # Por si decides dividir por dominios (opcional)
+│   │   └── reports/widgets/
+│   │       └── report_table.dart
 │
-├── test/                            # Pruebas unitarias y widget tests
+│   ├── pages/                         # Páginas principales del admin panel
+│   │   ├── activity_logs_page.dart
+│   │   ├── admin_dashboard_screen.dart         # Puede quedar obsoleta si usas dashboard_page.dart
+│   │   ├── app_metrics_screen.dart
+│   │   ├── audit_logs_screen.dart
+│   │   ├── dashboard_page.dart                 ✅ usar con AdminScaffold
+│   │   ├── dashboard_screen.dart               ❓ puedes unificar o eliminar
+│   │   ├── feedback_page.dart
+│   │   ├── manage_content_page.dart            ✅ pendiente refactor
+│   │   ├── manage_content_screen.dart
+│   │   ├── manage_users_page.dart              ✅ pendiente refactor
+│   │   ├── manage_users_screen.dart
+│   │   ├── metrics_page.dart
+│   │   ├── moderation_page.dart                ✅ pendiente refactor
+│   │   ├── moderation_queue_screen.dart
+│   │   ├── notifications_page.dart
+│   │   ├── payments_page.dart                  ✅ pendiente refactor
+│   │   ├── reports_page.dart
+│   │   ├── role_management_page.dart
+│   │   ├── settings_page.dart
+│   │   ├── system_status_page.dart             ✅ pendiente refactor
+│   │   ├── templates_page.dart
+│   │   ├── user_feedback_page.dart
+│   │   ├── user_management_page.dart
+│   │   └── user_reports_screen.dart
 │
-└── pubspec.yaml                     # Dependencias y configuración del proyecto
+└── pubspec.yaml
+
 
