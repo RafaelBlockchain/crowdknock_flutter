@@ -267,6 +267,8 @@ frontend-app/
 └── pubspec.yaml
 
 
+
+
 ├── frontend-admin/                # Panel web Flutter para administradores
 │   ├── lib/
 │   │   ├── main.dart              # Entry point
