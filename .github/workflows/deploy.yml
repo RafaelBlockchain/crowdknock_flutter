@@ -6,27 +6,26 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6' # o tu versión
-          channel: stable
+          flutter-version: '3.22.1'
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build Flutter Web
+      - name: Build Web
         run: flutter build web --base-href="/crowdknock-flutter/"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
+          publish_dir: build/web
