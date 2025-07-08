@@ -11,6 +11,7 @@ flutter build web --base-href="/crowdknock_flutter/"
 echo "🔄 Entrando a build/web..."
 cd build/web
 
+
 echo "🌳 Inicializando repo temporal..."
 git init
 git remote add origin https://github.com/RafaelBlockchain/crowdknock_flutter.git
