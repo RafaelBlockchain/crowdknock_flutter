@@ -65,9 +65,11 @@ app.use('/api/payments', authMiddleware, paymentsRoutes);
 app.use('/api/settings', authMiddleware, settingsRoutes);
 app.use('/api/system', systemRoutes);
 
+
+
 // Ejemplo de ruta protegida solo para admins
 // app.use('/api/admin', authMiddleware, roleMiddleware('admin'), adminRoutes);
-
+app.use('/auth', require('./src/routes/authRoutes'));
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
