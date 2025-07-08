@@ -205,7 +205,7 @@ frontend-app/
 │   │   │   └── ui/
 │   │   │       ├── change_password_screen.dart
 │   │   │       ├── edit_profile_screen.dart
-│   │   │       ├── invite_friends_screen.dart     # ✅ Aquí fue reubicada
+│   │   │       ├── invite_friends_screen.dart     
 │   │   │       └── profile_screen.dart
 │   │   ├── reports/
 │   │   │   ├── data/
