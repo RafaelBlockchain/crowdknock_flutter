@@ -13,6 +13,8 @@ import 'package:frontend_app/features/users/ui/manage_users_screen.dart';
 import 'package:frontend_app/features/profile/ui/profile_screen.dart';
 import 'package:frontend_app/features/profile/ui/change_password_screen.dart';
 
+'/edit-profile': (context) => const AuthGuard(child: EditProfileScreen()),
+
 // Middleware
 import 'package:frontend_app/core/middleware/auth_guard.dart';
 
