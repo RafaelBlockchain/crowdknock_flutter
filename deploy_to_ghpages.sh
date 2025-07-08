@@ -1,39 +1,42 @@
 #!/bin/bash
 
-# 🚀 Deploy automático a GitHub Pages para RafaelBlockchain/crowdknock_flutter
-
-# Detener si ocurre algún error
+# ⚠️ Detener en caso de errores
 set -e
 
-# Configura tu repositorio y rama
-REPO_URL="https://github.com/RafaelBlockchain/crowdknock_flutter.git"
+# ✅ Variables
+REPO="origin"
 BRANCH="gh-pages"
 BUILD_DIR="build/web"
+COMMIT_MSG="🚀 Deploy Flutter Web to GitHub Pages"
+TEMP_DIR=".gh-temp"
 
-echo "📦 Generando build de Flutter Web..."
-flutter build web --base-href="/crowdknock_flutter/"
+# ✅ Generar la build web
+echo "🔧 Ejecutando build Flutter Web..."
+flutter build web --base-href="/crowdknock-flutter/"
 
-echo "📁 Moviéndonos al directorio de build..."
-cd $BUILD_DIR
+# ✅ Crear carpeta temporal y mover build
+echo "📁 Preparando carpeta temporal para gh-pages..."
+rm -rf $TEMP_DIR
+mkdir $TEMP_DIR
+cp -r $BUILD_DIR/* $TEMP_DIR/
 
-echo "🌳 Inicializando repo temporal..."
-git init
-git remote add origin "$REPO_URL"
-git checkout -b "$BRANCH"
+# ✅ Inicializar rama gh-pages (si no existe aún)
+git checkout $BRANCH 2>/dev/null || git checkout -b $BRANCH
+git reset --hard
+git clean -fd
 
-# Desactivar Jekyll (importante para Flutter Web)
-touch .nojekyll
+# ✅ Copiar el contenido de la build al root de gh-pages
+rm -rf *
+cp -r $TEMP_DIR/* .
+rm -rf $TEMP_DIR
 
-echo "➕ Agregando archivos al commit..."
+# ✅ Añadir, commit y push
+echo "📦 Subiendo archivos a $BRANCH..."
 git add .
-git commit -m "Deploy to $BRANCH 🚀"
+git commit -m "$COMMIT_MSG"
+git push $REPO $BRANCH --force
 
-echo "⏫ Haciendo push forzado a $BRANCH..."
-git push -f origin "$BRANCH"
+# ✅ Volver a main o tu rama principal
+git checkout main
 
-echo "🧹 Limpiando repo temporal..."
-cd ../..
-rm -rf $BUILD_DIR/.git
-
-echo "✅ ¡Deploy completado con éxito!"
-echo "🌐 Tu app está disponible en: https://rafaelblockchain.github.io/crowdknock_flutter/"
+echo "✅ ¡Deploy completado exitosamente en GitHub Pages!"
