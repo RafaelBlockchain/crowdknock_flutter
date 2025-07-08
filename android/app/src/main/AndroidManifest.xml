@@ -6,14 +6,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
+        android:label="CrowdKnock_flutter"
+        android:name="${FlutterApplication}"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.Material3.DayNight.NoActionBar">
-        android:label="crowdknock_flutter"
-        android:name="${FlutterApplication}" <!-- ✅ NUEVO -->
 
-        
         <!-- Entrada principal -->
         <activity
             android:name=".MainActivity"
