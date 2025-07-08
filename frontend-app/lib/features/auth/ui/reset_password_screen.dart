@@ -26,7 +26,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       final newPassword = _newPasswordController.text.trim();
 
       // Aquí llamas al servicio backend con token + newPassword
-      await Future.delayed(const Duration(seconds: 2)); // Simulación
+      final authService = AuthService();
+       await authService.resetPassword(
+       token: token,
+       newPassword: newPassword,
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Contraseña restablecida con éxito')),
