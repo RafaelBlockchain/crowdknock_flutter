@@ -1,0 +1,7 @@
+import 'package:share_plus/share_plus.dart';
+
+void compartirInvitacion(String userId) {
+  final link = 'https://tusitio.com/invite?ref=$userId';
+  final mensaje = '¡Únete a nuestra app! Descárgala aquí: $link';
+  Share.share(mensaje);
+}
