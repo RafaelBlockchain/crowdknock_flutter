@@ -108,31 +108,164 @@ CrowdKnock/
     ├── package.json
 
 
-├── frontend-app/                  # App Flutter para usuarios (mobile-first)
-│   ├── lib/
-│   │   ├── main.dart              # Entry point
-│   │   ├── app.dart               # Temas, rutas, providers
-│   │   ├── core/                  # Reutilizables globales
-│   │   │   ├── constants/
-│   │   │   ├── widgets/
-│   │   │   ├── utils/
-│   │   │   └── services/          # Auth, API, notificaciones, etc.
-│   │   ├── config/                # env.dart, configuraciones por entorno
-│   │   ├── data/
-│   │   │   ├── models/            # User, Report, Challenge, etc
-│   │   │   ├── repositories/      # Encapsulan lógica de acceso a datos
-│   │   │   └── providers/         # REST, Firebase, WebSocket, etc.
-│   │   ├── features/
-│   │   │   ├── auth/
-│   │   │   ├── dashboard/
-│   │   │   ├── challenges/
-│   │   │   ├── polls/
-│   │   │   ├── reports/
-│   │   │   ├── admin_panel/       # Acceso limitado para funciones de admin
-│   │   │   └── settings/
-│   │   └── routes/
-│   ├── assets/
-│   └── test/
+
+CrowdKnock/
+frontend-app/
+├── lib/
+│   ├── app.dart                              # Configuración global de la app
+│   ├── main.dart                             # Punto de entrada principal
+│
+│   ├── config/                               # Configuración del entorno y rutas
+│   │   ├── env.dart                          # Variables de entorno
+│   │   ├── router.dart                       # Config global de rutas (GoRouter)
+│   │   └── theme.dart                        # Tema de la aplicación
+│
+│   ├── core/                                 # Base común reutilizable
+│   │   ├── constants.dart                    # Constantes generales
+│   │   ├── middleware/
+│   │   │   └── auth_guard.dart               # Middleware de protección con JWT
+│   │   ├── models/
+│   │   │   └── auth_user.dart                # Modelo base de usuario autenticado
+│   │   ├── providers/
+│   │   │   └── auth_provider.dart            # Provider de autenticación
+│   │   ├── services/
+│   │   │   ├── api_service.dart              # Abstracción HTTP
+│   │   │   └── auth_service.dart             # Lógica de autenticación
+│   │   ├── utils/
+│   │   │   └── 123                           # (A completar según funciones)
+│   │   └── widgets/                          # Widgets reutilizables globales
+│   │       ├── admin_app_bar.dart
+│   │       ├── admin_scaffold.dart
+│   │       ├── custom_button.dart
+│   │       ├── custom_text_field.dart
+│   │       ├── loading_indicator.dart
+│   │       └── primary_button.dart
+│
+│   ├── data/                                 # Modelos y lógica de acceso a datos
+│   │   ├── models/
+│   │   │   ├── report.dart
+│   │   │   ├── report_model.dart
+│   │   │   └── user_model.dart
+│   │   ├── providers/
+│   │   │   └── user_provider.dart
+│   │   └── repositories/
+│   │       ├── content_repository.dart
+│   │       ├── moderation_repository.dart
+│   │       └── report_repository.dart
+│
+│   ├── features/                             # Módulos funcionales
+│   │   ├── admin_panel/                      # En desarrollo o interno
+│   │   │   └── 123
+│   │   ├── auth/
+│   │   │   ├── auth_controller.dart
+│   │   │   ├── login_screen.dart             # (duplicado, puede eliminarse)
+│   │   │   ├── register_screen.dart
+│   │   │   └── ui/
+│   │   │       ├── forgot_password_screen.dart
+│   │   │       ├── login_screen.dart
+│   │   │       └── reset_password_screen.dart
+│   │   ├── challenges/
+│   │   │   ├── challenge_detail.dart
+│   │   │   └── challenge_list.dart
+│   │   ├── dashboard/
+│   │   │   └── data/
+│   │   │       └── dashboard_repository.dart
+│   │   ├── manage_content/
+│   │   │   ├── models/
+│   │   │   │   └── content_model.dart
+│   │   │   ├── ui/
+│   │   │   │   └── manage_content_screen.dart
+│   │   │   └── widgets/
+│   │   │       ├── content_filters.dart
+│   │   │       ├── content_row_actions.dart
+│   │   │       ├── content_table.dart
+│   │   │       ├── edit_content_dialog.dart
+│   │   │       └── upload_content_dialog.dart
+│   │   ├── metrics/
+│   │   │   └── ui/
+│   │   │       └── app_metrics_screen.dart
+│   │   ├── moderation/
+│   │   │   ├── ui/
+│   │   │   │   └── moderation_screen.dart
+│   │   │   └── widgets/
+│   │   │       ├── moderation_filters.dart
+│   │   │       └── moderation_table.dart
+│   │   ├── payments/
+│   │   │   ├── models/
+│   │   │   │   └── payment_model.dart
+│   │   │   ├── services/
+│   │   │   │   └── payments_service.dart
+│   │   │   ├── ui/
+│   │   │   │   └── payments_screen.dart
+│   │   │   └── widgets/
+│   │   │       └── payments_table.dart
+│   │   ├── polls/
+│   │   │   └── 123
+│   │   ├── profile/
+│   │   │   └── ui/
+│   │   │       ├── change_password_screen.dart
+│   │   │       ├── edit_profile_screen.dart
+│   │   │       ├── invite_friends_screen.dart     # ✅ Aquí fue reubicada
+│   │   │       └── profile_screen.dart
+│   │   ├── reports/
+│   │   │   ├── data/
+│   │   │   │   └── report_repository.dart
+│   │   │   ├── models/
+│   │   │   │   └── report_model.dart
+│   │   │   ├── services/
+│   │   │   │   └── reports_service.dart
+│   │   │   ├── ui/
+│   │   │   │   ├── reports_screen.dart
+│   │   │   │   └── submit_report_screen.dart
+│   │   │   └── widgets/
+│   │   │       ├── report_filters.dart
+│   │   │       └── report_table.dart
+│   │   ├── setting/
+│   │   │   └── 123
+│   │   └── system_status/
+│   │       ├── models/
+│   │       │   └── system_status_model.dart
+│   │       ├── services/
+│   │       │   └── system_status_service.dart
+│   │       └── ui/
+│   │           └── system_status_screen.dart
+│
+│   ├── pages/                                 # Páginas legacy o independientes
+│   │   ├── app_metrics_screen.dart            # (migrar a `features/metrics/ui`)
+│   │   └── payments_page.dart                 # (migrar a `features/payments/ui`)
+│
+│   ├── routes/
+│   │   └── app_routes.dart                    # Alias a config/router.dart
+│
+│   ├── theme/                                 # (migrar todo a config/theme.dart)
+│   │   └── 123
+│
+│   ├── widgets/                               # Widgets por categoría específica
+│   │   ├── charts/
+│   │   │   ├── content_time_chart.dart
+│   │   │   ├── devices_used_chart.dart
+│   │   │   ├── reports_chart.dart
+│   │   │   ├── sessions_chart.dart
+│   │   │   ├── user_retention_chart.dart
+│   │   │   └── users_chart.dart
+│   │   └── payments/
+│   │       ├── payments_filters.dart
+│   │       └── payments_table.dart
+│
+│   └── .env                                   # Variables de entorno locales
+│
+├── assets/
+│   ├── icons/
+│   │   └── logo.png
+│   └── images/
+│       └── logo.png
+│
+├── test/
+│   └── widget_tests/
+│       └── dashboard_test.dart
+│
+└── pubspec.yaml
+
 
 ├── frontend-admin/                # Panel web Flutter para administradores
 │   ├── lib/
