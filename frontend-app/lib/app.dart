@@ -15,6 +15,7 @@ import 'package:frontend_app/features/profile/ui/change_password_screen.dart';
 
 '/edit-profile': (context) => const AuthGuard(child: EditProfileScreen()),
 '/forgot-password': (context) => const ForgotPasswordScreen(),
+'/reset-password': (context) => const ResetPasswordScreen(),
 
 
 // Middleware
