@@ -1,42 +1,111 @@
-CrowdKnock_flutter/ 
-backend/
-├── src/
-│   ├── config/               # Configuraciones globales (DB, env, etc.)
-│   │   ├── db.js
-│   │   ├── env.js
-│   ├── middlewares/         # JWT, errores, CORS, logger, etc.
-│   │   ├── authMiddleware.js
-│   │   ├── errorHandler.js
-│   ├── routes/              # Rutas organizadas por módulo
-│   │   ├── auth.routes.js
-│   │   ├── users.routes.js
-│   │   ├── content.routes.js
-│   │   ├── moderation.routes.js
-│   │   ├── reports.routes.js
-│   │   ├── payments.routes.js
-│   │   └── settings.routes.js
-│   ├── controllers/         # Lógica de negocio por módulo
-│   │   ├── auth.controller.js
-│   │   ├── users.controller.js
-│   │   ├── content.controller.js
-│   │   ├── moderation.controller.js
-│   │   ├── reports.controller.js
-│   │   └── payments.controller.js
-│   ├── models/              # Consultas a la base de datos (PostgreSQL)
-│   │   ├── user.model.js
-│   │   ├── content.model.js
-│   │   ├── report.model.js
-│   │   ├── payment.model.js
-│   │   └── ...
-│   ├── utils/               # Funciones auxiliares y helpers
-│   │   ├── jwt.js
-│   │   ├── email.js
-│   │   └── validation.js
-│   ├── index.js             # Punto de entrada del servidor
-│   └── app.js               # Configuración de Express y middlewares
-├── .env                     # Variables de entorno
-├── package.json
-└── README.md
+CrowdKnock/
+└── backend/
+    ├── src/
+    │   ├── config/                        # Configuración de entorno y base de datos
+    │   │   ├── db.js
+    │   │   └── env.js
+
+    │   ├── controllers/                  # Lógica de cada módulo (consume servicios)
+    │   │   ├── auth.controller.js
+    │   │   ├── content.controller.js
+    │   │   ├── metricsController.js
+    │   │   ├── moderation.controller.js
+    │   │   ├── payments.controller.js
+    │   │   ├── reports.controller.js
+    │   │   ├── settings.controller.js
+    │   │   ├── system.controller.js
+    │   │   ├── system_status.controller.ts
+    │   │   └── users.controller.js
+
+    │   ├── middlewares/                  # Middleware de auth, permisos y errores
+    │   │   ├── auth.js
+    │   │   ├── authMiddleware.js
+    │   │   ├── errorHandler.js
+    │   │   └── roleMiddleware.js
+
+    │   ├── models/                       # Modelos de datos (PostgreSQL)
+    │   │   ├── Challenge.js
+    │   │   ├── Content.js
+    │   │   ├── Metric.js
+    │   │   ├── Payment.js
+    │   │   ├── Report.js
+    │   │   ├── Setting.js
+    │   │   ├── User.js
+    │   │   ├── index.js
+    │   │   └── systemStatus.model.js
+
+    │   ├── routes/                       # Rutas agrupadas por módulo
+    │   │   ├── auth.routes.js
+    │   │   ├── challengesRoutes.js
+    │   │   ├── content.routes.js
+    │   │   ├── metricsRoutes.js
+    │   │   ├── moderation.routes.js
+    │   │   ├── payments.routes.js
+    │   │   ├── reports.routes.js
+    │   │   ├── settings.routes.js
+    │   │   ├── system.routes.js
+    │   │   ├── system_status.routes.ts
+    │   │   ├── users.js
+    │   │   └── users.routes.js
+
+    │   ├── services/                     # Lógica de negocio (usada por controllers)
+    │   │   ├── content.service.js
+    │   │   ├── metrics.service.js
+    │   │   ├── payment.service.js
+    │   │   ├── report.service.js
+    │   │   ├── systemStatus.service.js
+    │   │   ├── system_status.service.ts
+    │   │   └── user.service.js
+
+    │   ├── utils/                        # Funciones utilitarias comunes
+    │   │   ├── email.js
+    │   │   ├── jwt.js
+    │   │   ├── token.js
+    │   │   └── validation.js
+
+    │   ├── app.js                        # Configuración central de la app
+    │   ├── index.js                      # Entrada base (puede redirigir a server.js)
+    │   └── server.js                     # Inicializa servidor y aplica middlewares
+
+    ├── db/                               # Inicialización y seed de la base de datos
+    │   ├── init.js
+    │   ├── init.sql
+    │   ├── seed.js
+    │   ├── seed.sql
+
+    ├── scripts/                          # CLI scripts para entorno y migraciones
+    │   ├── createTestDb.js
+    │   ├── init.sql
+    │   ├── migrate.js
+    │   ├── reset.js
+    │   ├── resetTestDb.js
+    │   ├── seed.js
+    │   ├── seed.sql
+    │   └── syncModels.js
+
+    ├── tests/                            # Pruebas unitarias por módulo
+    │   ├── auth.test.js
+    │   ├── challenges.test.js
+    │   ├── content.test.js
+    │   ├── dashboard.test.js
+    │   ├── metrics.test.js
+    │   ├── moderation.test.js
+    │   ├── payments.test.js
+    │   ├── reports.test.js
+    │   ├── settings.test.js
+    │   ├── system-status.test.js
+    │   ├── users.test.js
+    │   └── setup.js
+
+    ├── .env                              # Variables de entorno principal
+    ├── .env.test                         # Variables de entorno para testing
+    ├── .env.example                      # Plantilla de entorno
+
+    ├── README.md                         # Documentación general del backend
+    ├── jest.config.js                    # Configuración de Jest
+    ├── jest.global-setup.js
+    ├── jest.setup.js
+    ├── package.json
 
 
 ├── frontend-app/                  # App Flutter para usuarios (mobile-first)
