@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// Pages
+// Páginas del panel
 import 'pages/dashboard_page.dart';
 import 'pages/manage_content_page.dart';
 import 'pages/moderation_page.dart';
@@ -10,15 +10,9 @@ import 'pages/system_status_page.dart';
 import 'pages/app_metrics_page.dart';
 import 'pages/manage_users_page.dart';
 
-'/change-password': (_) => const AuthGuard(child: ChangePasswordScreen()),
-
-void main() {
+void main() async{
+   WidgetsFlutterBinding.ensureInitialized();
   runApp(const CrowdKnockAdminApp());
-}
-
-void main() {
-  ApiClient.setToken('tu_jwt_temporal_aqui');
-  runApp(const MyApp());
 }
 
 class CrowdKnockAdminApp extends StatelessWidget {
@@ -40,7 +34,7 @@ class CrowdKnockAdminApp extends StatelessWidget {
   }
 }
 
-// Rutas del panel de administración
+// Configuración de rutas del panel de administración
 final _router = GoRouter(
   initialLocation: '/dashboard',
   routes: [
@@ -74,4 +68,3 @@ final _router = GoRouter(
     ),
   ],
 );
-
