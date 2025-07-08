@@ -12,6 +12,8 @@ import 'package:frontend_app/features/payments/ui/payments_screen.dart';
 import 'package:frontend_app/features/users/ui/manage_users_screen.dart';
 import 'package:frontend_app/features/profile/ui/profile_screen.dart';
 import 'package:frontend_app/features/profile/ui/change_password_screen.dart';
+import 'package:frontend_app/core/services/auth_service.dart';
+
 
 '/edit-profile': (context) => const AuthGuard(child: EditProfileScreen()),
 '/forgot-password': (context) => const ForgotPasswordScreen(),
@@ -24,6 +26,11 @@ import 'package:frontend_app/core/middleware/auth_guard.dart';
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+ final authService = AuthService();
+await authService.resetPassword(
+  token: token,
+  newPassword: newPassword,
+);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
