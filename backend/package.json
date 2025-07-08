@@ -1,4 +1,21 @@
 {
+  "name": "crowdknock-flutter",
+  "version": "1.0.0",
+  "description": "CrowdKnock Flutter Web App Deployment",
+  "scripts": {
+    "deploy": "sh ./deploy_to_ghpages.sh"
+  },
+  "keywords": [
+    "flutter",
+    "web",
+    "gh-pages",
+    "deployment"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
+
+{
   "name": "crowdknock-backend",
   "version": "1.0.0",
   "description": "Backend API para CrowdKnock con Express y PostgreSQL",
