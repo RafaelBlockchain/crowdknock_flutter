@@ -1,12 +1,40 @@
 const express = require('express');
 const router = express.Router();
 
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('../config/db');
+const jwt = require('jsonwebtoken');
+const { User } = require('../models');
 const { verifyToken } = require('../middleware/auth');
 const authController = require('../controllers/auth.controller');
 
+// un usuario recupere su contraseña
+const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ message: 'Token y contraseña son requeridos' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('Error en resetPassword:', error);
+    res.status(400).json({ message: 'Token inválido o expirado' });
+  }
+};
 
 // Rutas públicas para autenticación y registro
 router.post('/register', authController.register);
