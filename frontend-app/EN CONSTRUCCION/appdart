@@ -1,8 +1,0 @@
-import 'package:frontend_app/features/profile/ui/profile_screen.dart';
-import 'package:frontend_app/features/profile/ui/edit_profile_screen.dart';
-import 'package:frontend_app/features/profile/ui/change_password_screen.dart';
-
-// Dentro de routes:
-'/profile': (_) => const AuthGuard(child: ProfileScreen()),
-'/profile/edit': (_) => const AuthGuard(child: EditProfileScreen()),
-'/profile/change-password': (_) => const AuthGuard(child: ChangePasswordScreen()),
