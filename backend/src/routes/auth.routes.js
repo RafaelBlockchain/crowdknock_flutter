@@ -20,6 +20,17 @@ router.post(
   authController.login
 );
 
+router.post(
+  '/register',
+  [
+    body('email').isEmail().withMessage('Email inválido'),
+    body('password').isLength({ min: 6 }).withMessage('Mínimo 6 caracteres'),
+    body('name').notEmpty().withMessage('El nombre es obligatorio')
+  ],
+  validateRequest,
+  authController.register
+);
+
 
 // ✅ Recuperación de contraseña
 router.post('/reset-password', authController.resetPassword);
