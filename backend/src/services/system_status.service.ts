@@ -1,8 +1,16 @@
+export interface SystemStatus {
+  database: string;
+  uptime: number;
+  timestamp: string;
+  status: 'ok' | 'error';
+  services: Record<string, 'online' | 'offline'>;
+}
+
 export class SystemStatusService {
-  async getSystemStatus() {
+  async getSystemStatus(): Promise<SystemStatus> {
     return {
       database: 'operativa',
-      uptime: process.uptime(),
+      uptime: parseFloat(process.uptime().toFixed(2)),
       timestamp: new Date().toISOString(),
       status: 'ok',
       services: {
