@@ -1,68 +1,19 @@
-const db = require('../config/db');
+const metricsService = require('../services/metrics.service');
 
-// ✅ Métricas generales del sistema (usuarios, contenidos, reportes)
-const getOverviewMetrics = async (req, res) => {
+exports.getOverviewMetrics = async (req, res, next) => {
   try {
-    const userCount = await db.one('SELECT COUNT(*) FROM users');
-    const contentCount = await db.one('SELECT COUNT(*) FROM contents');
-    const reportCount = await db.one('SELECT COUNT(*) FROM reports');
-
-    res.json({
-      success: true,
-      data: {
-        users: parseInt(userCount.count),
-        contents: parseInt(contentCount.count),
-        reports: parseInt(reportCount.count),
-      },
-    });
+    const metrics = await metricsService.getOverview();
+    res.json({ success: true, data: metrics });
   } catch (error) {
-    console.error('Error al obtener métricas generales:', error);
-    res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    next(error);
   }
 };
 
-// ✅ Métricas detalladas por tipo
-const getDetailedMetric = async (req, res) => {
-  const { type } = req.params;
-
+exports.getDetailedMetric = async (req, res, next) => {
   try {
-    let query;
-    switch (type) {
-      case 'sessions':
-        query = `
-          SELECT date_trunc('day', created_at) AS day, COUNT(*) AS count
-          FROM user_sessions
-          GROUP BY day
-          ORDER BY day
-        `;
-        break;
-      case 'reports':
-        query = `
-          SELECT status, COUNT(*) AS count
-          FROM reports
-          GROUP BY status
-        `;
-        break;
-      case 'content-type':
-        query = `
-          SELECT type, COUNT(*) AS count
-          FROM contents
-          GROUP BY type
-        `;
-        break;
-      default:
-        return res.status(400).json({ success: false, error: 'Tipo de métrica no válida' });
-    }
-
-    const result = await db.query(query);
-    res.json({ success: true, data: result.rows });
+    const data = await metricsService.getDetailed(req.params.type);
+    res.json({ success: true, data });
   } catch (error) {
-    console.error('Error al obtener métricas detalladas:', error);
-    res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    res.status(error.status || 500).json({ success: false, error: error.message });
   }
-};
-
-module.exports = {
-  getOverviewMetrics,
-  getDetailedMetric,
 };
