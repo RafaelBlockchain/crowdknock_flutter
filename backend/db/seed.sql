@@ -15,6 +15,16 @@ VALUES
   (gen_random_uuid(), 'Carlos', 'carlos@example.com', '$2a$10$HASH_CARLOS', 'moderator', false)
 ON CONFLICT (email) DO NOTHING;
 
+-- Insertar usuario admin
+INSERT INTO users (id, name, email, password, role)
+VALUES (
+  gen_random_uuid(),
+  'Admin',
+  'admin@example.com',
+  '$2b$10$6jv...hash',  -- Asegúrate de hashearlo antes
+  'admin'
+);
+
 -- ✅ Contenido
 INSERT INTO content (id, title, type, url, status, uploaded_by)
 VALUES 
