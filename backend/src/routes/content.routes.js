@@ -1,24 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const contentController = require('../controllers/contentController');
-const { verifyToken } = require('../middleware/auth');
+const contentController = require('../controllers/content.controller');
+const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ protección con middleware
-router.get('/', authMiddleware, controller.handler);
-router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+// ✅ Obtener todo el contenido (requiere autenticación)
+router.get('/', authMiddleware, contentController.getAllContent);
 
-// Obtener todo el contenido
-router.get('/', verifyToken, contentController.getAllContent);
+// ✅ Crear nuevo contenido (solo admin)
+router.post('/', authMiddleware, roleMiddleware(['admin']), contentController.createContent);
 
-// Crear nuevo contenido
-router.post('/', verifyToken, contentController.createContent);
+// ✅ Actualizar contenido (solo admin)
+router.put('/:id', authMiddleware, roleMiddleware(['admin']), contentController.updateContent);
 
-// Actualizar contenido
-router.put('/:id', verifyToken, contentController.updateContent);
-
-// Eliminar contenido
-router.delete('/:id', verifyToken, contentController.deleteContent);
+// ✅ Eliminar contenido (solo admin)
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), contentController.deleteContent);
 
 module.exports = router;
-
