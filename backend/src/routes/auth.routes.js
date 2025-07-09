@@ -6,6 +6,7 @@ const { body } = require('express-validator');
 const { validateRequest } = require('../middlewares/validationMiddleware');
 
 
+
 // ✅ Registro de usuario
 router.post('/register', authController.register);
 
@@ -30,6 +31,10 @@ router.post(
   validateRequest,
   authController.register
 );
+
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
 
 
 // ✅ Recuperación de contraseña
