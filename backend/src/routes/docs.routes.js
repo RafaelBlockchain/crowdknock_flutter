@@ -4,8 +4,13 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
 
-const swaggerDocument = YAML.load(path.join(__dirname, '../../docs/swagger.yaml'));
+// Cargar archivo YAML de documentación
+const swaggerDocument = YAML.load(path.resolve(__dirname, '../../docs/swagger.yaml'));
 
-router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Middleware Swagger en /docs
+router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+  customSiteTitle: 'CrowdKnock API Docs',
+  customCss: '.swagger-ui .topbar { display: none }'
+}));
 
 module.exports = router;
