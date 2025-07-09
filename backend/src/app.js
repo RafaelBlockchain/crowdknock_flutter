@@ -18,6 +18,14 @@ const systemStatusRoutes = require('./routes/system_status.routes');
 
 const app = express();
 
+// Swagger UI Express
+const express = require('express');
+const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // 🌐 Middleware global
 app.use(cors());
 app.use(express.json());
