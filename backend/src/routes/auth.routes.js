@@ -72,6 +72,34 @@ router.get('/me', authMiddleware, authController.getCurrentUser);
  *                   type: string
  *       401:
  *         description: Credenciales inválidas
+
+ /**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Obtener datos del usuario autenticado
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Información del usuario autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *       401:
+ *         description: Token no válido o no enviado
  */
+router.get('/me', authMiddleware, authController.me);
 router.post('/login', authController.login);
 module.exports = router;
