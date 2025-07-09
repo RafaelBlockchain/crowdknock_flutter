@@ -13,14 +13,17 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
   schemas:
     ErrorResponse:
       type: object
       properties:
         success:
           type: boolean
+          example: false
         error:
           type: string
+          example: Credenciales inválidas
 
 security:
   - bearerAuth: []
@@ -28,7 +31,8 @@ security:
 paths:
   /auth/login:
     post:
-      summary: Login de usuario
+      summary: Iniciar sesión
+      tags: [Auth]
       requestBody:
         required: true
         content:
@@ -38,11 +42,13 @@ paths:
               properties:
                 email:
                   type: string
+                  example: admin@crowdknock.com
                 password:
                   type: string
+                  example: admin123
       responses:
         '200':
-          description: Login exitoso
+          description: Login exitoso, retorna token y datos del usuario
         '401':
           description: Credenciales inválidas
           content:
@@ -53,6 +59,9 @@ paths:
   /auth/me:
     get:
       summary: Obtener datos del usuario autenticado
+      tags: [Auth]
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Usuario autenticado
@@ -62,6 +71,7 @@ paths:
   /metrics/daily:
     get:
       summary: Métricas diarias
+      tags: [Metrics]
       responses:
         '200':
           description: Datos de métricas diarias
@@ -69,6 +79,7 @@ paths:
   /metrics/users:
     get:
       summary: Métricas de usuarios
+      tags: [Metrics]
       responses:
         '200':
           description: Estadísticas de usuarios
@@ -76,6 +87,7 @@ paths:
   /metrics/content:
     get:
       summary: Métricas de contenido
+      tags: [Metrics]
       responses:
         '200':
           description: Estadísticas de contenido
@@ -83,20 +95,23 @@ paths:
   /metrics/challenges:
     get:
       summary: Métricas de desafíos
+      tags: [Metrics]
       responses:
         '200':
           description: Estadísticas de desafíos
 
-  /moderation/reported-content:
+  /moderation/reports:
     get:
-      summary: Contenido reportado
+      summary: Obtener reportes pendientes
+      tags: [Moderation]
       responses:
         '200':
-          description: Lista de contenido reportado
+          description: Lista de contenido/comentarios reportados
 
   /users:
     get:
       summary: Listar usuarios
+      tags: [Users]
       responses:
         '200':
           description: Lista de usuarios
@@ -104,13 +119,15 @@ paths:
   /settings:
     get:
       summary: Obtener configuración
+      tags: [Settings]
       responses:
         '200':
-          description: Configuración general
+          description: Configuración general de la plataforma
 
-  /system-status:
+  /system/status:
     get:
       summary: Estado del sistema
+      tags: [System]
       responses:
         '200':
           description: Estado actual del sistema
