@@ -4,6 +4,10 @@ const router = express.Router();
 const contentController = require('../controllers/contentController');
 const { verifyToken } = require('../middleware/auth');
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+
 // Obtener todo el contenido
 router.get('/', verifyToken, contentController.getAllContent);
 
