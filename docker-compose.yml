@@ -9,10 +9,10 @@ services:
       POSTGRES_USER: crowduser
       POSTGRES_PASSWORD: crowdpass
       POSTGRES_DB: crowdknockdb
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   backend:
     build: .
@@ -33,6 +33,7 @@ services:
       PORT: 3000
     volumes:
       - .:/app
+      - /app/node_modules
     command: ["node", "src/server.js"]
 
 volumes:
