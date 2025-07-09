@@ -4,6 +4,10 @@ const router = express.Router();
 const moderationController = require('../controllers/moderationController');
 const { verifyToken } = require('../middleware/auth');
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+
 // Obtener lista de reportes pendientes
 router.get('/reports', verifyToken, moderationController.getAllReports);
 
