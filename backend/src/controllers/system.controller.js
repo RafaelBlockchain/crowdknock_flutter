@@ -1,27 +1,11 @@
-import os from 'os';
-import process from 'process';
-import db from '../config/db.js';
+import { Request, Response } from 'express';
+import { getStatusReport } from '../services/system_status.service';
 
-export const getSystemStatus = async (req, res) => {
+export const getSystemStatus = async (req: Request, res: Response) => {
   try {
-    // Verificar conexión a la base de datos
-    await db.connect(); // o db.authenticate() según configuración
-
-    const status = {
-      uptime: process.uptime(), // tiempo en segundos
-      dbConnected: true,
-      version: '1.0.0',
-      memoryUsage: process.memoryUsage(),
-      platform: os.platform(),
-      services: {
-        emails: 'ok',
-        push: 'ok',
-        payments: 'ok'
-      }
-    };
-
+    const status = await getStatusReport();
     res.status(200).json({ success: true, data: status });
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error en system status:', error);
     res.status(500).json({
       success: false,
