@@ -1,20 +1,17 @@
-// backend/src/middlewares/roleMiddleware.js
-
-function authorizeRoles(...allowedRoles) {
+function roleMiddleware(requiredRole) {
   return (req, res, next) => {
-    // Suponemos que el usuario ya está autenticado y su info está en req.user
     const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ success: false, error: 'No autenticado' });
+      return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
     }
 
-    if (!allowedRoles.includes(user.role)) {
-      return res.status(403).json({ success: false, error: 'Acceso denegado: rol no autorizado' });
+    if (user.role !== requiredRole) {
+      return res.status(403).json({ success: false, error: 'Acceso denegado: rol insuficiente' });
     }
 
     next();
   };
 }
 
-module.exports = authorizeRoles;
+module.exports = roleMiddleware;
