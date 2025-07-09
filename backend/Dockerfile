@@ -1,24 +1,31 @@
-# Imagen base
-FROM node:20-alpine
+# Etapa 1: Build
+FROM node:20-alpine AS build
 
-# Directorio de trabajo dentro del contenedor
+# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar dependencias primero
+# Copiar archivos necesarios
 COPY package*.json ./
 
-# Instalar solo dependencias necesarias para producción
+# Instalar dependencias solo de producción
 RUN npm install --omit=dev
 
 # Copiar el resto del código
 COPY . .
 
-# Variables de entorno por defecto
-ENV NODE_ENV=production
-ENV PORT=3000
+# Etapa 2: Producción
+FROM node:20-alpine
 
-# Exponer el puerto
+WORKDIR /app
+
+# Copiar dependencias instaladas y código desde etapa anterior
+COPY --from=build /app /app
+
+# Puerto que usará el contenedor
 EXPOSE 3000
 
-# Comando para ejecutar la app
-CMD ["node", "src/main.js"]
+# Variable de entorno (opcional)
+ENV NODE_ENV=production
+
+# Comando de inicio
+CMD ["node", "src/server.js"]
