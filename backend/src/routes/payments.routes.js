@@ -5,10 +5,13 @@ const paymentsController = require('../controllers/payments.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Obtener todos los pagos (autenticado)
-router.get('/', authMiddleware, paymentsController.getAll);
+// 🔐 Proteger todas las rutas con autenticación
+router.use(authMiddleware);
 
-// ✅ Crear nuevo pago (solo admin)
-router.post('/', authMiddleware, roleMiddleware(['admin']), paymentsController.create);
+// ✅ Obtener todos los pagos (usuarios autenticados)
+router.get('/', paymentsController.getAll);
+
+// ✅ Crear un nuevo pago (solo admin)
+router.post('/', roleMiddleware(['admin']), paymentsController.create);
 
 module.exports = router;
