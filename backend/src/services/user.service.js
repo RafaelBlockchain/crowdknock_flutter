@@ -3,19 +3,23 @@ const { User } = require('../models');
 /**
  * Obtener todos los usuarios
  */
-async function getAllUsers() {
+exports.getAll = async () => {
   try {
-    return await User.findAll();
+    return await User.findAll({
+      attributes: ['id', 'name', 'email', 'role', 'createdAt', 'isBanned'],
+      order: [['createdAt', 'DESC']],
+    });
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
     throw new Error('No se pudieron obtener los usuarios');
   }
-}
+};
 
 /**
  * Obtener un usuario por ID
+ * @param {string|number} id
  */
-async function getUserById(id) {
+exports.getById = async (id) => {
   try {
     const user = await User.findByPk(id);
     if (!user) {
@@ -28,12 +32,14 @@ async function getUserById(id) {
     console.error(`Error al buscar usuario ${id}:`, error);
     throw new Error('No se pudo obtener el usuario');
   }
-}
+};
 
 /**
  * Actualizar un usuario
+ * @param {string|number} id
+ * @param {Object} data
  */
-async function updateUser(id, data) {
+exports.update = async (id, data) => {
   try {
     const user = await User.findByPk(id);
     if (!user) {
@@ -46,12 +52,13 @@ async function updateUser(id, data) {
     console.error(`Error al actualizar usuario ${id}:`, error);
     throw new Error('No se pudo actualizar el usuario');
   }
-}
+};
 
 /**
- * Bloquear (ban) a un usuario
+ * Bloquear (banear) un usuario
+ * @param {string|number} id
  */
-async function banUser(id) {
+exports.ban = async (id) => {
   try {
     const user = await User.findByPk(id);
     if (!user) {
@@ -64,11 +71,4 @@ async function banUser(id) {
     console.error(`Error al bloquear usuario ${id}:`, error);
     throw new Error('No se pudo bloquear el usuario');
   }
-}
-
-module.exports = {
-  getAllUsers,
-  getUserById,
-  updateUser,
-  banUser,
 };
