@@ -2,12 +2,24 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
+const { body } = require('express-validator');
+const { validateRequest } = require('../middlewares/validationMiddleware');
+
 
 // ✅ Registro de usuario
 router.post('/register', authController.register);
 
 // ✅ Login de usuario
-router.post('/login', authController.login);
+router.post(
+  '/login',
+  [
+    body('email').isEmail().withMessage('Email inválido'),
+    body('password').notEmpty().withMessage('La contraseña es obligatoria')
+  ],
+  validateRequest,
+  authController.login
+);
+
 
 // ✅ Recuperación de contraseña
 router.post('/reset-password', authController.resetPassword);
