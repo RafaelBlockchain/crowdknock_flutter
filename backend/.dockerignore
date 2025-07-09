@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.test
+tests
+coverage
+*.log
+.vscode
+__snapshots__
+jest.*
+docker-compose.*
+*.md
