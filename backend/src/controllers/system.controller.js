@@ -4,11 +4,11 @@ import db from '../config/db.js';
 
 export const getSystemStatus = async (req, res) => {
   try {
-    // Verificar conexión con la base de datos
-    await db.authenticate();
+    // Verificar conexión a la base de datos
+    await db.connect(); // o db.authenticate() según configuración
 
     const status = {
-      uptime: process.uptime(), // segundos desde que inició el servidor
+      uptime: process.uptime(), // tiempo en segundos
       dbConnected: true,
       version: '1.0.0',
       memoryUsage: process.memoryUsage(),
@@ -20,12 +20,14 @@ export const getSystemStatus = async (req, res) => {
       }
     };
 
-    res.status(200).json(status);
+    res.status(200).json({ success: true, data: status });
   } catch (error) {
+    console.error('❌ Error en system status:', error);
     res.status(500).json({
-      uptime: process.uptime(),
+      success: false,
+      error: 'Fallo en la conexión a la base de datos',
       dbConnected: false,
-      error: 'Failed to connect to database',
+      uptime: process.uptime(),
     });
   }
 };
