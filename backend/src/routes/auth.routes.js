@@ -1,11 +1,12 @@
 const express = require('express');
-const { body } = require('express-validator');
 const router = express.Router();
+const { body } = require('express-validator');
 
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const { validateRequest } = require('../middlewares/validationMiddleware');
+const { loginRateLimiter } = require('../middlewares/rateLimiter');
 
 // ✅ Registro de usuario
 router.post(
@@ -19,9 +20,10 @@ router.post(
   authController.register
 );
 
-// ✅ Login de usuario
+// ✅ Login con protección contra fuerza bruta
 router.post(
   '/login',
+  loginRateLimiter,
   [
     body('email').isEmail().withMessage('Email inválido'),
     body('password').notEmpty().withMessage('La contraseña es obligatoria'),
@@ -49,7 +51,7 @@ router.post(
   authController.resetPassword
 );
 
-// ✅ Verificar JWT manualmente (no requiere protección)
+// ✅ Verificación de token manual
 router.get('/verify', authController.verifyToken);
 
 // ✅ Obtener datos del usuario autenticado
