@@ -5,9 +5,7 @@ import { roleMiddleware } from '../middlewares/roleMiddleware';
 
 const router = Router();
 
-// ✅ Obtener estado del sistema (autenticado)
-router.get('/status', authenticateJWT, getSystemStatus);
-
-// Aquí puedes agregar más rutas si deseas control extendido del sistema (reinicio, métricas, etc.)
+// ✅ Obtener estado del sistema (solo admin autenticado)
+router.get('/status', authenticateJWT, roleMiddleware(['admin']), getSystemStatus);
 
 export default router;
