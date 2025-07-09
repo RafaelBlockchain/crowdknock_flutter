@@ -1,65 +1,53 @@
-// backend/src/controllers/content.controller.js
-const ContentService = require('../services/ContentService');
-const { pick } = require('../utils/validation'); // Utilidad para filtrar campos permitidos
+const contentService = require('../services/content.service');
+const { pick } = require('../utils/validation');
 
-// GET /content
-const getAllContent = async (req, res, next) => {
+exports.getAllContent = async (req, res, next) => {
   try {
-    const contents = await ContentService.getAllContent();
+    const contents = await contentService.getAll();
     res.json({ success: true, data: contents });
   } catch (err) {
     next(err);
   }
 };
 
-// POST /content
-const createContent = async (req, res, next) => {
+exports.createContent = async (req, res, next) => {
   try {
-    // Solo permitir campos válidos
     const allowedFields = ['title', 'type', 'url', 'description', 'status'];
     const data = pick(req.body, allowedFields);
 
-    const content = await ContentService.createContent(data);
+    const content = await contentService.create(data);
     res.status(201).json({ success: true, data: content });
   } catch (err) {
     next(err);
   }
 };
 
-// PUT /content/:id
-const updateContent = async (req, res, next) => {
+exports.updateContent = async (req, res, next) => {
   try {
     const allowedFields = ['title', 'type', 'url', 'description', 'status'];
     const data = pick(req.body, allowedFields);
+    const { id } = req.params;
 
-    const updated = await ContentService.updateContent(req.params.id, data);
-    if (updated) {
-      res.json({ success: true, message: 'Content updated' });
-    } else {
-      res.status(404).json({ success: false, error: 'Content not found' });
+    const updated = await contentService.update(id, data);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Contenido no encontrado' });
     }
+
+    res.json({ success: true, message: 'Contenido actualizado correctamente' });
   } catch (err) {
     next(err);
   }
 };
 
-// DELETE /content/:id
-const deleteContent = async (req, res, next) => {
+exports.deleteContent = async (req, res, next) => {
   try {
-    const deleted = await ContentService.deleteContent(req.params.id);
-    if (deleted) {
-      res.json({ success: true, message: 'Content deleted' });
-    } else {
-      res.status(404).json({ success: false, error: 'Content not found' });
+    const deleted = await contentService.delete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, error: 'Contenido no encontrado' });
     }
+
+    res.json({ success: true, message: 'Contenido eliminado correctamente' });
   } catch (err) {
     next(err);
   }
-};
-
-module.exports = {
-  getAllContent,
-  createContent,
-  updateContent,
-  deleteContent,
 };
