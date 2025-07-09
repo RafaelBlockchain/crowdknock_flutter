@@ -41,4 +41,37 @@ router.get('/verify', authController.verifyToken);
 // ✅ Obtener datos del usuario autenticado (requiere JWT)
 router.get('/me', authMiddleware, authController.getCurrentUser);
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login de usuario
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: admin@example.com
+ *               password:
+ *                 type: string
+ *                 example: admin123
+ *     responses:
+ *       200:
+ *         description: Login exitoso, retorna token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Credenciales inválidas
+ */
+router.post('/login', authController.login);
 module.exports = router;
