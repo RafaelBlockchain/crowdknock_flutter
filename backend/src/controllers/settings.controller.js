@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 const settingsController = {
-  // Obtener todas las configuraciones
+  // ✅ Obtener todas las configuraciones
   getAllSettings: async (req, res) => {
     try {
       const settings = await db.any('SELECT key, value FROM settings');
@@ -9,18 +9,25 @@ const settingsController = {
       settings.forEach((s) => {
         formatted[s.key] = s.value;
       });
-      res.json(formatted);
+      res.json({ success: true, data: formatted });
     } catch (error) {
       console.error('Error al obtener configuraciones:', error);
-      res.status(500).json({ error: 'Error al obtener configuraciones' });
+      res.status(500).json({ success: false, error: 'Error al obtener configuraciones' });
     }
   },
 
-  // Actualizar una configuración
+  // ✅ Actualizar una configuración por clave
   updateSetting: async (req, res) => {
     try {
       const { key } = req.params;
       const { value } = req.body;
+
+      if (!key || typeof value === 'undefined') {
+        return res.status(400).json({
+          success: false,
+          error: 'La clave y el valor son requeridos',
+        });
+      }
 
       await db.none(
         `INSERT INTO settings (key, value)
@@ -30,12 +37,16 @@ const settingsController = {
         [key, value]
       );
 
-      res.json({ success: true, key, value });
+      res.json({
+        success: true,
+        message: 'Configuración actualizada correctamente',
+        data: { key, value },
+      });
     } catch (error) {
       console.error('Error al actualizar configuración:', error);
-      res.status(500).json({ error: 'Error al actualizar configuración' });
+      res.status(500).json({ success: false, error: 'Error al actualizar configuración' });
     }
-  }
+  },
 };
 
 module.exports = settingsController;
