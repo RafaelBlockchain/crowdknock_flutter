@@ -1,33 +1,39 @@
-version: '3.9'
+version: '3.8'
 
 services:
   db:
     image: postgres:15
-    restart: always
+    container_name: crowdknock_db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: crowduser
       POSTGRES_PASSWORD: crowdpass
-      POSTGRES_DB: crowdknock
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: crowdknockdb
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   backend:
-    build:
-      context: ./backend
+    build: .
+    container_name: crowdknock_backend
+    restart: unless-stopped
     depends_on:
       - db
-    environment:
-      PORT: 3000
-      DATABASE_URL: postgres://crowduser:crowdpass@db:5432/crowdknock
-      JWT_SECRET: supersecreto123
-      JWT_EXPIRES_IN: 1d
     ports:
       - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: crowduser
+      DB_PASSWORD: crowdpass
+      DB_NAME: crowdknockdb
+      JWT_SECRET: supersecret123
+      PORT: 3000
     volumes:
-      - ./backend:/app
-    command: ["node", "src/main.js"]
+      - .:/app
+    command: ["node", "src/server.js"]
 
 volumes:
   pgdata:
