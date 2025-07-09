@@ -1,4 +1,4 @@
-function roleMiddleware(requiredRole) {
+function roleMiddleware(allowedRoles = []) {
   return (req, res, next) => {
     const user = req.user;
 
@@ -6,8 +6,11 @@ function roleMiddleware(requiredRole) {
       return res.status(401).json({ success: false, error: 'Usuario no autenticado' });
     }
 
-    if (user.role !== requiredRole) {
-      return res.status(403).json({ success: false, error: 'Acceso denegado: rol insuficiente' });
+    if (!allowedRoles.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: `Acceso denegado: se requiere uno de los roles [${allowedRoles.join(', ')}]`,
+      });
     }
 
     next();
