@@ -15,6 +15,7 @@ const reportsRoutes = require('./routes/reports.routes');
 const settingsRoutes = require('./routes/settings.routes');
 const systemRoutes = require('./routes/system.routes');
 const systemStatusRoutes = require('./routes/system_status.routes');
+const docsRoutes = require('./routes/docs.routes');
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/system', systemRoutes);
 app.use('/api/system-status', systemStatusRoutes);
+app.use('/', docsRoutes);
 
 // 🩹 Middleware de errores (debe ir al final)
 app.use(errorHandler);
