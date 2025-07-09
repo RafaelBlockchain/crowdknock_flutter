@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+
 // Controlador simulado (puedes mover esto a un archivo separado si lo deseas)
 const paymentsController = {
   getAll: async (req, res) => {
