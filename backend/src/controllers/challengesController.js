@@ -1,57 +1,31 @@
-const db = require('../config/db');
-const { pick } = require('../utils/validation'); // Asegúrate de tener esta utilidad
+const challengeService = require('../services/challenge.service');
 
-// ✅ Obtener todos los desafíos
-const getAllChallenges = async (req, res) => {
+exports.getAllChallenges = async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT id, title, description, reward, status, created_at
-      FROM challenges
-      ORDER BY created_at DESC
-    `);
-    res.json({ success: true, data: result.rows });
+    const challenges = await challengeService.getAll();
+    res.json({ success: true, data: challenges });
   } catch (error) {
     console.error('Error al obtener desafíos:', error);
     res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// ✅ Crear un nuevo desafío
-const createChallenge = async (req, res) => {
+exports.createChallenge = async (req, res) => {
   try {
-    const fields = ['title', 'description', 'reward', 'status'];
-    const data = pick(req.body, fields);
-
-    const result = await db.query(
-      `INSERT INTO challenges (title, description, reward, status, created_at)
-       VALUES ($1, $2, $3, $4, NOW())
-       RETURNING id, title, description, reward, status, created_at`,
-      [data.title, data.description, data.reward, data.status]
-    );
-
-    res.status(201).json({ success: true, data: result.rows[0] });
+    const newChallenge = await challengeService.create(req.body);
+    res.status(201).json({ success: true, data: newChallenge });
   } catch (error) {
     console.error('Error al crear desafío:', error);
     res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// ✅ Actualizar desafío
-const updateChallenge = async (req, res) => {
+exports.updateChallenge = async (req, res) => {
   try {
-    const fields = ['title', 'description', 'reward', 'status'];
-    const data = pick(req.body, fields);
     const { id } = req.params;
+    const updated = await challengeService.update(id, req.body);
 
-    const result = await db.query(
-      `UPDATE challenges
-       SET title = $1, description = $2, reward = $3, status = $4
-       WHERE id = $5
-       RETURNING id`,
-      [data.title, data.description, data.reward, data.status, id]
-    );
-
-    if (result.rowCount === 0) {
+    if (!updated) {
       return res.status(404).json({ success: false, error: 'Desafío no encontrado' });
     }
 
@@ -62,13 +36,12 @@ const updateChallenge = async (req, res) => {
   }
 };
 
-// ✅ Eliminar desafío
-const deleteChallenge = async (req, res) => {
+exports.deleteChallenge = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await db.query(`DELETE FROM challenges WHERE id = $1`, [id]);
+    const deleted = await challengeService.delete(id);
 
-    if (result.rowCount === 0) {
+    if (!deleted) {
       return res.status(404).json({ success: false, error: 'Desafío no encontrado' });
     }
 
@@ -77,11 +50,4 @@ const deleteChallenge = async (req, res) => {
     console.error('Error al eliminar desafío:', error);
     res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
-};
-
-module.exports = {
-  getAllChallenges,
-  createChallenge,
-  updateChallenge,
-  deleteChallenge,
 };
