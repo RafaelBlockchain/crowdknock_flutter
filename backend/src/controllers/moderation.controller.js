@@ -1,6 +1,6 @@
 const db = require('../config/db');
 
-// Obtener todos los reportes pendientes
+// ✅ Obtener todos los reportes pendientes
 const getAllReports = async (req, res) => {
   try {
     const result = await db.query(`
@@ -9,33 +9,38 @@ const getAllReports = async (req, res) => {
       WHERE status = 'pending'
       ORDER BY created_at DESC
     `);
-    res.json(result.rows);
+    res.json({ success: true, data: result.rows });
   } catch (error) {
     console.error('Error fetching reports:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// Aprobar el reporte (marcar como resuelto)
+// ✅ Aprobar el reporte (marcar como resuelto)
 const approveReport = async (req, res) => {
   const { id } = req.params;
   try {
-    await db.query(`UPDATE reports SET status = 'approved' WHERE id = $1`, [id]);
-    res.json({ message: 'Reporte aprobado' });
+    const result = await db.query(`UPDATE reports SET status = 'approved' WHERE id = $1 RETURNING id`, [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
+    }
+    res.json({ success: true, message: 'Reporte aprobado' });
   } catch (error) {
     console.error('Error approving report:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// Eliminar contenido o comentario relacionado
+// ✅ Eliminar contenido o comentario relacionado y actualizar el reporte
 const deleteReport = async (req, res) => {
   const { id } = req.params;
   try {
-    const report = await db.query(`SELECT * FROM reports WHERE id = $1`, [id]);
-    if (report.rows.length === 0) return res.status(404).json({ message: 'Reporte no encontrado' });
+    const report = await db.oneOrNone(`SELECT * FROM reports WHERE id = $1`, [id]);
+    if (!report) {
+      return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
+    }
 
-    const { type, content_id, comment_id } = report.rows[0];
+    const { type, content_id, comment_id } = report;
 
     if (type === 'content' && content_id) {
       await db.query(`DELETE FROM contents WHERE id = $1`, [content_id]);
@@ -45,22 +50,25 @@ const deleteReport = async (req, res) => {
 
     await db.query(`UPDATE reports SET status = 'deleted' WHERE id = $1`, [id]);
 
-    res.json({ message: 'Contenido eliminado y reporte actualizado' });
+    res.json({ success: true, message: 'Contenido eliminado y reporte actualizado' });
   } catch (error) {
     console.error('Error deleting reported content:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// Ignorar reporte
+// ✅ Ignorar reporte
 const ignoreReport = async (req, res) => {
   const { id } = req.params;
   try {
-    await db.query(`UPDATE reports SET status = 'ignored' WHERE id = $1`, [id]);
-    res.json({ message: 'Reporte ignorado' });
+    const result = await db.query(`UPDATE reports SET status = 'ignored' WHERE id = $1 RETURNING id`, [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
+    }
+    res.json({ success: true, message: 'Reporte ignorado' });
   } catch (error) {
     console.error('Error ignoring report:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
@@ -70,4 +78,3 @@ module.exports = {
   deleteReport,
   ignoreReport,
 };
-
