@@ -3,6 +3,10 @@ const router = express.Router();
 const metricsController = require('../controllers/metricsController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+
 // Swagger Docs + Rutas protegidas
 /**
  * @swagger
