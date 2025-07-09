@@ -1,111 +1,100 @@
 CrowdKnock/
-└── backend/
-    ├── src/
-    │   ├── config/                        # Configuración de entorno y base de datos
-    │   │   ├── db.js
-    │   │   └── env.js
-
-    │   ├── controllers/                  # Lógica de cada módulo (consume servicios)
-    │   │   ├── auth.controller.js
-    │   │   ├── content.controller.js
-    │   │   ├── metricsController.js
-    │   │   ├── moderation.controller.js
-    │   │   ├── payments.controller.js
-    │   │   ├── reports.controller.js
-    │   │   ├── settings.controller.js
-    │   │   ├── system.controller.js
-    │   │   ├── system_status.controller.ts
-    │   │   └── users.controller.js
-
-    │   ├── middlewares/                  # Middleware de auth, permisos y errores
-    │   │   ├── auth.js
-    │   │   ├── authMiddleware.js
-    │   │   ├── errorHandler.js
-    │   │   └── roleMiddleware.js
-
-    │   ├── models/                       # Modelos de datos (PostgreSQL)
-    │   │   ├── Challenge.js
-    │   │   ├── Content.js
-    │   │   ├── Metric.js
-    │   │   ├── Payment.js
-    │   │   ├── Report.js
-    │   │   ├── Setting.js
-    │   │   ├── User.js
-    │   │   ├── index.js
-    │   │   └── systemStatus.model.js
-
-    │   ├── routes/                       # Rutas agrupadas por módulo
-    │   │   ├── auth.routes.js
-    │   │   ├── challengesRoutes.js
-    │   │   ├── content.routes.js
-    │   │   ├── metricsRoutes.js
-    │   │   ├── moderation.routes.js
-    │   │   ├── payments.routes.js
-    │   │   ├── reports.routes.js
-    │   │   ├── settings.routes.js
-    │   │   ├── system.routes.js
-    │   │   ├── system_status.routes.ts
-    │   │   ├── users.js
-    │   │   └── users.routes.js
-
-    │   ├── services/                     # Lógica de negocio (usada por controllers)
-    │   │   ├── content.service.js
-    │   │   ├── metrics.service.js
-    │   │   ├── payment.service.js
-    │   │   ├── report.service.js
-    │   │   ├── systemStatus.service.js
-    │   │   ├── system_status.service.ts
-    │   │   └── user.service.js
-
-    │   ├── utils/                        # Funciones utilitarias comunes
-    │   │   ├── email.js
-    │   │   ├── jwt.js
-    │   │   ├── token.js
-    │   │   └── validation.js
-
-    │   ├── app.js                        # Configuración central de la app
-    │   ├── index.js                      # Entrada base (puede redirigir a server.js)
-    │   └── server.js                     # Inicializa servidor y aplica middlewares
-
-    ├── db/                               # Inicialización y seed de la base de datos
-    │   ├── init.js
-    │   ├── init.sql
-    │   ├── seed.js
-    │   ├── seed.sql
-
-    ├── scripts/                          # CLI scripts para entorno y migraciones
-    │   ├── createTestDb.js
-    │   ├── init.sql
-    │   ├── migrate.js
-    │   ├── reset.js
-    │   ├── resetTestDb.js
-    │   ├── seed.js
-    │   ├── seed.sql
-    │   └── syncModels.js
-
-    ├── tests/                            # Pruebas unitarias por módulo
-    │   ├── auth.test.js
-    │   ├── challenges.test.js
-    │   ├── content.test.js
-    │   ├── dashboard.test.js
-    │   ├── metrics.test.js
-    │   ├── moderation.test.js
-    │   ├── payments.test.js
-    │   ├── reports.test.js
-    │   ├── settings.test.js
-    │   ├── system-status.test.js
-    │   ├── users.test.js
-    │   └── setup.js
-
-    ├── .env                              # Variables de entorno principal
-    ├── .env.test                         # Variables de entorno para testing
-    ├── .env.example                      # Plantilla de entorno
-
-    ├── README.md                         # Documentación general del backend
-    ├── jest.config.js                    # Configuración de Jest
-    ├── jest.global-setup.js
-    ├── jest.setup.js
-    ├── package.json
+backend/
+├── .dockerignore
+├── .env
+├── .env.example
+├── .env.test
+├── Dockerfile
+├── jest.config.js
+├── jest.global-setup.js
+├── jest.setup.js
+├── Makefile
+├── package.json
+├── README.md
+├── server.js
+├── db/
+│   ├── init.js
+│   ├── init.sql
+│   ├── seed.js
+│   ├── seed.sql
+├── docs/
+│   ├── api-responses.md
+│   ├── swagger.yaml
+├── scripts/
+│   ├── createTestDb.js
+│   ├── init.sql
+│   ├── migrate.js
+│   ├── reset.js
+│   ├── resetTestDb.js
+│   ├── seed.js
+│   ├── seed.sql
+│   ├── syncModels.js
+├── src/
+│   ├── app.js
+│   ├── index.js
+│   ├── main.js
+│   ├── main.ts
+│   ├── server.js
+│   ├── config/
+│   │   ├── db.js
+│   │   ├── env.js
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── challengesController.js
+│   │   ├── content.controller.js
+│   │   ├── metricsController.js
+│   │   ├── moderation.controller.js
+│   │   ├── payments.controller.js
+│   │   ├── reports.controller.js
+│   │   ├── settings.controller.js
+│   │   ├── system.controller.js
+│   │   ├── system_status.controller.ts
+│   │   ├── users.controller.js
+│   ├── docs/
+│   │   ├── swagger.js
+│   ├── middlewares/
+│   │   ├── auth.js
+│   │   ├── authMiddleware.js
+│   │   ├── errorHandler.js
+│   │   ├── roleMiddleware.js
+│   │   ├── validationMiddleware.js
+│   ├── models/
+│   │   ├── Challenge.js
+│   │   ├── Content.js
+│   │   ├── index.js
+│   │   ├── Metric.js
+│   │   ├── Payment.js
+│   │   ├── Report.js
+│   │   ├── Setting.js
+│   │   ├── systemStatus.model.js
+│   │   ├── User.js
+│   ├── routes/
+│   │   ├── auth.routes.js
+│   │   ├── challengesRoutes.js
+│   │   ├── content.routes.js
+│   │   ├── docs.routes.js
+│   │   ├── metricsRoutes.js
+│   │   ├── moderation.routes.js
+│   │   ├── payments.routes.js
+│   │   ├── reports.routes.js
+│   │   ├── settings.routes.js
+│   │   ├── system.routes.js
+│   │   ├── system_status.routes.ts
+│   │   ├── users.js
+│   │   ├── users.routes.js
+│   ├── services/
+│   │   ├── content.service.js
+│   │   ├── metrics.service.js
+│   │   ├── payment.service.js
+│   │   ├── report.service.js
+│   │   ├── system_status.service.ts
+│   │   ├── systemStatus.service.js
+│   │   ├── user.service.js
+│   ├── utils/
+│       ├── email.js
+│       ├── jwt.js
+│       ├── token.js
+│       ├── validate.js
 
 
 
