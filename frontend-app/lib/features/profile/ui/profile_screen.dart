@@ -1,10 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend_app/core/providers/auth_provider.dart';
+import 'package:frontend_app/core/services/version_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late Future<VersionInfo> _versionFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _versionFuture = VersionService.loadVersionInfo();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mi perfil')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('👤 Información del usuario'),
+            const SizedBox(height: 16),
+
+            // ... otros datos del usuario
+
+            const Divider(height: 32),
+            const Text('🧾 Información de la aplicación', style: TextStyle(fontWeight: FontWeight.bold)),
+
+            FutureBuilder<VersionInfo>(
+              future: _versionFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (snapshot.hasError) {
+                  return Text('Error cargando versión: ${snapshot.error}');
+                }
+
+                final version = snapshot.data!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Versión: ${version.version}'),
+                    Text('Build: ${version.build}'),
+                    Text('Entorno: ${version.environment}'),
+                    Text('Flutter: ${version.flutterVersion}'),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+  
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
