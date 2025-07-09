@@ -1,11 +1,9 @@
-const { sendEmail } = require('../utils/email');
-const { JWT_SECRET } = require('../config/env');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/env');
 const { User } = require('../models');
+const { sendEmail } = require('../utils/email');
 const {
   validateEmail,
   validatePassword,
@@ -20,73 +18,6 @@ function generateToken(user) {
     { expiresIn: JWT_EXPIRES_IN || '1d' }
   );
 }
-
-resetPassword: async (req, res) => {
-  try {
-    const { token, password } = req.body;
-
-    if (!token || !password) {
-      return res.status(400).json({ message: 'Token y contraseña son requeridos' });
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const userId = decoded.id;
-
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    res.json({ message: 'Contraseña actualizada correctamente' });
-  } catch (error) {
-    console.error('Error en resetPassword:', error);
-    res.status(400).json({ message: 'Token inválido o expirado' });
-  }
-},
-
-
-// Enviar correo con link de recuperación
-resetPasswordRequest: async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ message: 'El email es requerido' });
-    }
-
-    const user = await User.findOne({ where: { email } });
-
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    // Generar token temporal (válido 1 hora)
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
-
-    const resetLink = `https://frontend.crowdknock.com/reset-password?token=${token}`;
-
-    // Enviar email
-    await sendEmail({
-      to: user.email,
-      subject: 'Recuperación de contraseña - CrowdKnock',
-      html: `
-        <h2>Hola ${user.name}</h2>
-        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-        <a href="${resetLink}" target="_blank">${resetLink}</a>
-        <p>Este enlace es válido por 1 hora.</p>
-      `,
-    });
-
-    res.json({ message: 'Correo de recuperación enviado' });
-  } catch (error) {
-    console.error('Error en resetPasswordRequest:', error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-},
 
 const authController = {
   // ✅ Registro de usuario
@@ -161,11 +92,33 @@ const authController = {
     }
   },
 
-  // ✅ Verificación de token manual (opcional)
+  // ✅ Obtener usuario actual (/auth/me)
+  getCurrentUser: async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+      }
+
+      const { id, name, email, role } = user;
+      res.json({ success: true, data: { id, name, email, role } });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // ✅ Verificación manual de token
   verifyToken: async (req, res) => {
     try {
       const authHeader = req.headers['authorization'];
-      if (!authHeader) return res.status(401).json({ success: false, error: 'Token no proporcionado' });
+      if (!authHeader) {
+        return res.status(401).json({ success: false, error: 'Token no proporcionado' });
+      }
 
       const token = authHeader.split(' ')[1];
       const decoded = jwt.verify(token, JWT_SECRET);
@@ -177,7 +130,42 @@ const authController = {
     }
   },
 
-  // ✅ Recuperación de contraseña (requiere token válido de reseteo)
+  // ✅ Solicitud de recuperación de contraseña
+  resetPasswordRequest: async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ message: 'El email es requerido' });
+      }
+
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+      const resetLink = `https://frontend.crowdknock.com/reset-password?token=${token}`;
+
+      await sendEmail({
+        to: user.email,
+        subject: 'Recuperación de contraseña - CrowdKnock',
+        html: `
+          <h2>Hola ${user.name}</h2>
+          <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+          <a href="${resetLink}" target="_blank">${resetLink}</a>
+          <p>Este enlace es válido por 1 hora.</p>
+        `,
+      });
+
+      res.json({ message: 'Correo de recuperación enviado' });
+    } catch (error) {
+      console.error('Error en resetPasswordRequest:', error);
+      res.status(500).json({ message: 'Error interno del servidor' });
+    }
+  },
+
+  // ✅ Confirmación de nueva contraseña
   resetPassword: async (req, res) => {
     try {
       const { token, password } = req.body;
@@ -202,26 +190,6 @@ const authController = {
     } catch (error) {
       console.error('Error en resetPassword:', error);
       res.status(400).json({ success: false, error: 'Token inválido o expirado' });
-    }
-  },
-
-  // ✅ Obtener usuario actual (/auth/me)
-  getCurrentUser: async (req, res, next) => {
-    try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
-      }
-
-      const user = await User.findByPk(userId);
-      if (!user) {
-        return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
-      }
-
-      const { id, name, email, role } = user;
-      res.json({ success: true, data: { id, name, email, role } });
-    } catch (error) {
-      next(error);
     }
   },
 };
