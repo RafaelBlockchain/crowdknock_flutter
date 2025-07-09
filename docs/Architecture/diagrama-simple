@@ -17,7 +17,7 @@ backend/
 │   ├── init.sql
 │   ├── seed.js
 │   ├── seed.sql
-├── docs/
+├── docs/                                     # Swagger (si se autogenera)
 │   ├── api-responses.md
 │   ├── swagger.yaml
 ├── scripts/
@@ -30,15 +30,15 @@ backend/
 │   ├── seed.sql
 │   ├── syncModels.js
 ├── src/
-│   ├── app.js
+│   ├── app.js                                # Inicializa middlewares y rutas
 │   ├── index.js
 │   ├── main.js
 │   ├── main.ts
-│   ├── server.js
-│   ├── config/
+│   ├── server.js                             # Inicia el servidor
+│   ├── config/                               # Configuración global (.env, DB)
 │   │   ├── db.js
 │   │   ├── env.js
-│   ├── controllers/
+│   ├── controllers/                          # Reciben requests y delegan a servicios
 │   │   ├── auth.controller.js
 │   │   ├── challengesController.js
 │   │   ├── content.controller.js
@@ -50,15 +50,15 @@ backend/
 │   │   ├── system.controller.js
 │   │   ├── system_status.controller.ts
 │   │   ├── users.controller.js
-│   ├── docs/
+│   ├── docs/                                 # Swagger (si se autogenera)
 │   │   ├── swagger.js
-│   ├── middlewares/
+│   ├── middlewares/                          # auth, roles, errores, validación
 │   │   ├── auth.js
 │   │   ├── authMiddleware.js
 │   │   ├── errorHandler.js
 │   │   ├── roleMiddleware.js
 │   │   ├── validationMiddleware.js
-│   ├── models/
+│   ├── models/                               # Sequelize Models
 │   │   ├── Challenge.js
 │   │   ├── Content.js
 │   │   ├── index.js
@@ -68,7 +68,7 @@ backend/
 │   │   ├── Setting.js
 │   │   ├── systemStatus.model.js
 │   │   ├── User.js
-│   ├── routes/
+│   ├── routes/                               # Rutas Express
 │   │   ├── auth.routes.js
 │   │   ├── challengesRoutes.js
 │   │   ├── content.routes.js
@@ -82,7 +82,7 @@ backend/
 │   │   ├── system_status.routes.ts
 │   │   ├── users.js
 │   │   ├── users.routes.js
-│   ├── services/
+│   ├── services/                             # Lógica de negocio
 │   │   ├── content.service.js
 │   │   ├── metrics.service.js
 │   │   ├── payment.service.js
@@ -90,7 +90,7 @@ backend/
 │   │   ├── system_status.service.ts
 │   │   ├── systemStatus.service.js
 │   │   ├── user.service.js
-│   ├── utils/
+│   ├── utils/                               # JWT, email, helpers
 │       ├── email.js
 │       ├── jwt.js
 │       ├── token.js
@@ -101,28 +101,28 @@ backend/
 CrowdKnock/
 frontend-app/
 ├── lib/
-│   ├── app.dart                              # Configuración global de la app
-│   ├── main.dart                             # Punto de entrada principal
+│   ├── app.dart                             # Configuración global de la app
+│   ├── main.dart                            # Punto de entrada principal
 │
-│   ├── config/                               # Configuración del entorno y rutas
-│   │   ├── env.dart                          # Variables de entorno
-│   │   ├── router.dart                       # Config global de rutas (GoRouter)
-│   │   └── theme.dart                        # Tema de la aplicación
+│   ├── config/                              # Configuración del entorno y rutas
+│   │   ├── env.dart                         # Variables de entorno
+│   │   ├── router.dart                      # Config global de rutas (GoRouter)
+│   │   └── theme.dart                       # Tema de la aplicación
 │
-│   ├── core/                                 # Base común reutilizable
-│   │   ├── constants.dart                    # Constantes generales
+│   ├── core/                                # Base común reutilizable
+│   │   ├── constants.dart                   # Constantes generales
 │   │   ├── middleware/
-│   │   │   └── auth_guard.dart               # Middleware de protección con JWT
+│   │   │   └── auth_guard.dart              # Middleware de protección con JWT
 │   │   ├── models/
-│   │   │   └── auth_user.dart                # Modelo base de usuario autenticado
+│   │   │   └── auth_user.dart               # Modelo base de usuario autenticado
 │   │   ├── providers/
-│   │   │   └── auth_provider.dart            # Provider de autenticación
+│   │   │   └── auth_provider.dart           # Provider de autenticación
 │   │   ├── services/
-│   │   │   ├── api_service.dart              # Abstracción HTTP
-│   │   │   └── auth_service.dart             # Lógica de autenticación
+│   │   │   ├── api_service.dart             # Abstracción HTTP
+│   │   │   └── auth_service.dart            # Lógica de autenticación
 │   │   ├── utils/
-│   │   │   └── 123                           # (A completar según funciones)
-│   │   └── widgets/                          # Widgets reutilizables globales
+│   │   │   └── 123                          # (A completar según funciones)
+│   │   └── widgets/                         # Widgets reutilizables globales
 │   │       ├── admin_app_bar.dart
 │   │       ├── admin_scaffold.dart
 │   │       ├── custom_button.dart
