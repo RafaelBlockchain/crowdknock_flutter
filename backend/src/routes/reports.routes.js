@@ -5,17 +5,19 @@ const reportsController = require('../controllers/reports.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Obtener todos los reportes (autenticado)
-router.get('/', authMiddleware, reportsController.getAllReports);
+// 🔐 Todas las rutas requieren autenticación
+router.use(authMiddleware);
 
-// ✅ Aprobar reporte (requiere admin)
-router.post('/:id/approve', authMiddleware, roleMiddleware(['admin']), reportsController.approveReport);
+// ✅ Obtener todos los reportes (cualquier usuario autenticado)
+router.get('/', reportsController.getAllReports);
 
-// ✅ Ignorar reporte (requiere admin)
-router.post('/:id/ignore', authMiddleware, roleMiddleware(['admin']), reportsController.ignoreReport);
+// ✅ Aprobar reporte (solo admin)
+router.post('/:id/approve', roleMiddleware(['admin']), reportsController.approveReport);
 
-// ✅ Eliminar reporte (requiere admin)
-router.delete('/:id', authMiddleware, roleMiddleware(['admin']), reportsController.deleteReport);
+// ✅ Ignorar reporte (solo admin)
+router.post('/:id/ignore', roleMiddleware(['admin']), reportsController.ignoreReport);
+
+// ✅ Eliminar reporte (solo admin)
+router.delete('/:id', roleMiddleware(['admin']), reportsController.deleteReport);
 
 module.exports = router;
-
