@@ -1,5 +1,4 @@
 // backend/src/middlewares/authMiddleware.js
-
 const { verifyToken } = require('../utils/jwt');
 
 function authMiddleware(req, res, next) {
@@ -16,7 +15,7 @@ function authMiddleware(req, res, next) {
     req.user = decoded; // Agrega los datos del usuario a la request
     next();
   } catch (err) {
-    console.error('Error en authMiddleware:', err);
+    console.error('Error en authMiddleware:', err.message);
     return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
   }
 }
