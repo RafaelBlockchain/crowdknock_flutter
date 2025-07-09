@@ -1,53 +1,61 @@
-const { Content } = require('../models');
+const db = require('../config/db');
+const { pick } = require('../utils/validation');
 
-/**
- * Obtener todos los contenidos
- */
-async function getAllContent() {
-  return await Content.findAll();
-}
+exports.getAll = async () => {
+  const result = await db.query(`
+    SELECT id, title, description, type, url, created_at
+    FROM contents
+    ORDER BY created_at DESC
+  `);
+  return result.rows;
+};
 
-/**
- * Crear nuevo contenido
- * @param {Object} data
- */
-async function createContent(data) {
-  return await Content.create(data);
-}
+exports.create = async (data) => {
+  const fields = ['title', 'description', 'type', 'url'];
+  const content = pick(data, fields);
 
-/**
- * Actualizar contenido existente
- * @param {String} id
- * @param {Object} updates
- */
-async function updateContent(id, updates) {
-  const content = await Content.findByPk(id);
-  if (!content) {
+  const result = await db.query(
+    `INSERT INTO contents (title, description, type, url, created_at)
+     VALUES ($1, $2, $3, $4, NOW())
+     RETURNING id, title, description, type, url, created_at`,
+    [content.title, content.description, content.type, content.url]
+  );
+
+  return result.rows[0];
+};
+
+exports.update = async (id, updates) => {
+  const fields = ['title', 'description', 'type', 'url'];
+  const data = pick(updates, fields);
+
+  const result = await db.query(
+    `UPDATE contents
+     SET title = $1, description = $2, type = $3, url = $4
+     WHERE id = $5
+     RETURNING id`,
+    [data.title, data.description, data.type, data.url, id]
+  );
+
+  if (result.rowCount === 0) {
     const error = new Error('Contenido no encontrado');
     error.status = 404;
     throw error;
   }
-  return await content.update(updates);
-}
 
-/**
- * Eliminar contenido
- * @param {String} id
- */
-async function deleteContent(id) {
-  const content = await Content.findByPk(id);
-  if (!content) {
+  return { message: 'Contenido actualizado correctamente' };
+};
+
+exports.remove = async (id) => {
+  const result = await db.query(
+    `DELETE FROM contents WHERE id = $1`,
+    [id]
+  );
+
+  if (result.rowCount === 0) {
     const error = new Error('Contenido no encontrado');
     error.status = 404;
     throw error;
   }
-  await content.destroy();
+
   return { message: 'Contenido eliminado correctamente' };
-}
-
-module.exports = {
-  getAllContent,
-  createContent,
-  updateContent,
-  deleteContent,
 };
