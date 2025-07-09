@@ -21,6 +21,34 @@ function generateToken(user) {
   );
 }
 
+resetPassword: async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ message: 'Token y contraseña son requeridos' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userId = decoded.id;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
+  } catch (error) {
+    console.error('Error en resetPassword:', error);
+    res.status(400).json({ message: 'Token inválido o expirado' });
+  }
+},
+
+
 // Enviar correo con link de recuperación
 resetPasswordRequest: async (req, res) => {
   try {
