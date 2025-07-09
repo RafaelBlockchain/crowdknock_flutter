@@ -1,3 +1,6 @@
+const { sendEmail } = require('../utils/email');
+const { JWT_SECRET } = require('../config/env');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
@@ -17,6 +20,45 @@ function generateToken(user) {
     { expiresIn: JWT_EXPIRES_IN || '1d' }
   );
 }
+
+// Enviar correo con link de recuperación
+resetPasswordRequest: async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'El email es requerido' });
+    }
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Generar token temporal (válido 1 hora)
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+
+    const resetLink = `https://frontend.crowdknock.com/reset-password?token=${token}`;
+
+    // Enviar email
+    await sendEmail({
+      to: user.email,
+      subject: 'Recuperación de contraseña - CrowdKnock',
+      html: `
+        <h2>Hola ${user.name}</h2>
+        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+        <a href="${resetLink}" target="_blank">${resetLink}</a>
+        <p>Este enlace es válido por 1 hora.</p>
+      `,
+    });
+
+    res.json({ message: 'Correo de recuperación enviado' });
+  } catch (error) {
+    console.error('Error en resetPasswordRequest:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+},
 
 const authController = {
   // ✅ Registro de usuario
