@@ -1,39 +1,10 @@
-// backend/src/controllers/auth.controller.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/env');
 const { User } = require('../models');
 
-// usuario recupere su contraseña
-const resetPassword = async (req, res) => {
-  try {
-    const { token, password } = req.body;
-
-    if (!token || !password) {
-      return res.status(400).json({ message: 'Token y contraseña son requeridos' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
-
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    res.json({ message: 'Contraseña actualizada correctamente' });
-  } catch (error) {
-    console.error('Error en resetPassword:', error);
-    res.status(400).json({ message: 'Token inválido o expirado' });
-  }
-};
-
-// Generar token JWT
+// 🔐 Generar token JWT
 function generateToken(user) {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
@@ -43,6 +14,7 @@ function generateToken(user) {
 }
 
 const authController = {
+  // ✅ Registro de usuario
   register: async (req, res) => {
     try {
       const { email, password, name } = req.body;
@@ -73,6 +45,7 @@ const authController = {
     }
   },
 
+  // ✅ Login
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -91,7 +64,6 @@ const authController = {
         return res.status(401).json({ error: 'Credenciales inválidas' });
       }
 
-      // Excluir password antes de enviar datos al cliente
       const { password: _, ...userWithoutPassword } = user;
       const token = generateToken(userWithoutPassword);
       res.json({ token, user: userWithoutPassword });
@@ -102,6 +74,7 @@ const authController = {
     }
   },
 
+  // ✅ Verificación de token
   verifyToken: async (req, res) => {
     try {
       const authHeader = req.headers['authorization'];
@@ -114,6 +87,54 @@ const authController = {
     } catch (error) {
       console.error('Token inválido:', error);
       res.status(401).json({ valid: false, error: 'Token inválido o expirado' });
+    }
+  },
+
+  // ✅ Recuperación de contraseña
+  resetPassword: async (req, res) => {
+    try {
+      const { token, password } = req.body;
+
+      if (!token || !password) {
+        return res.status(400).json({ message: 'Token y contraseña son requeridos' });
+      }
+
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const userId = decoded.id;
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      res.json({ message: 'Contraseña actualizada correctamente' });
+    } catch (error) {
+      console.error('Error en resetPassword:', error);
+      res.status(400).json({ message: 'Token inválido o expirado' });
+    }
+  },
+
+  // ✅ Obtener datos del usuario autenticado
+  getCurrentUser: async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: 'Token inválido o expirado' });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      const { id, name, email, role } = user;
+      res.json({ user: { id, name, email, role } });
+    } catch (error) {
+      next(error);
     }
   }
 };
