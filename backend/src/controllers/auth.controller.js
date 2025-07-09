@@ -1,23 +1,13 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const db = require('../config/db');
-const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/env');
 const { User } = require('../models');
 const { sendEmail } = require('../utils/email');
+const { generateToken, verifyToken } = require('../utils/jwt');
 const {
   validateEmail,
   validatePassword,
   validateRequired,
 } = require('../utils/validation');
-
-// 🔐 Generar token JWT
-function generateToken(user) {
-  return jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN || '1d' }
-  );
-}
 
 const authController = {
   // ✅ Registro de usuario
@@ -92,36 +82,14 @@ const authController = {
     }
   },
 
-  // ✅ Obtener usuario actual (/auth/me)
-  getCurrentUser: async (req, res, next) => {
-    try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
-      }
-
-      const user = await User.findByPk(userId);
-      if (!user) {
-        return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
-      }
-
-      const { id, name, email, role } = user;
-      res.json({ success: true, data: { id, name, email, role } });
-    } catch (error) {
-      next(error);
-    }
-  },
-
-  // ✅ Verificación manual de token
+  // ✅ Verificación de token manual
   verifyToken: async (req, res) => {
     try {
       const authHeader = req.headers['authorization'];
-      if (!authHeader) {
-        return res.status(401).json({ success: false, error: 'Token no proporcionado' });
-      }
+      if (!authHeader) return res.status(401).json({ success: false, error: 'Token no proporcionado' });
 
       const token = authHeader.split(' ')[1];
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = verifyToken(token);
       res.json({ success: true, data: { valid: true, user: decoded } });
 
     } catch (error) {
@@ -130,7 +98,7 @@ const authController = {
     }
   },
 
-  // ✅ Solicitud de recuperación de contraseña
+  // ✅ Solicitud de recuperación
   resetPasswordRequest: async (req, res) => {
     try {
       const { email } = req.body;
@@ -140,11 +108,12 @@ const authController = {
       }
 
       const user = await User.findOne({ where: { email } });
+
       if (!user) {
         return res.status(404).json({ message: 'Usuario no encontrado' });
       }
 
-      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
+      const token = generateToken({ id: user.id }, '1h');
       const resetLink = `https://frontend.crowdknock.com/reset-password?token=${token}`;
 
       await sendEmail({
@@ -165,7 +134,7 @@ const authController = {
     }
   },
 
-  // ✅ Confirmación de nueva contraseña
+  // ✅ Confirmación de reseteo
   resetPassword: async (req, res) => {
     try {
       const { token, password } = req.body;
@@ -174,7 +143,7 @@ const authController = {
         return res.status(400).json({ success: false, error: 'Token y contraseña son requeridos' });
       }
 
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = verifyToken(token);
       const userId = decoded.id;
 
       const user = await User.findByPk(userId);
@@ -190,6 +159,26 @@ const authController = {
     } catch (error) {
       console.error('Error en resetPassword:', error);
       res.status(400).json({ success: false, error: 'Token inválido o expirado' });
+    }
+  },
+
+  // ✅ Obtener usuario actual
+  getCurrentUser: async (req, res, next) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
+      }
+
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+      }
+
+      const { id, name, email, role } = user;
+      res.json({ success: true, data: { id, name, email, role } });
+    } catch (error) {
+      next(error);
     }
   },
 };
