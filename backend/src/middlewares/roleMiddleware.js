@@ -1,3 +1,13 @@
+// src/middlewares/roleMiddleware.js
+module.exports = function roleMiddleware(allowedRoles = []) {
+  return function (req, res, next) {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Acceso denegado: rol no autorizado' });
+    }
+    next();
+  };
+};
+
 function roleMiddleware(allowedRoles = []) {
   return (req, res, next) => {
     const user = req.user;
