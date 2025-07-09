@@ -1,3 +1,11 @@
+# Dockerfile
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
 # Etapa 1: Build
 FROM node:20-alpine AS build
 
@@ -9,9 +17,6 @@ COPY package*.json ./
 
 # Instalar dependencias solo de producción
 RUN npm install --omit=dev
-
-# Copiar el resto del código
-COPY . .
 
 # Etapa 2: Producción
 FROM node:20-alpine
