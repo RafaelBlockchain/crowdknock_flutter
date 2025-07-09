@@ -168,22 +168,213 @@ Content-Type: application/json
 }
 ```
 
----
+🛡️ MODERATION
+GET /moderation/reported-content
+json
+Copiar
+Editar
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "contentId": "uuid",
+      "type": "video",
+      "reportCount": 5,
+      "status": "pending",
+      "reportedAt": "2025-07-08T10:30:00Z"
+    }
+  ]
+}
+POST /moderation/resolve
+Request:
 
-## ❌ ERROR GENÉRICO
+json
+Copiar
+Editar
+{
+  "reportId": "uuid",
+  "action": "approve"
+}
+Response:
 
-```json
+json
+Copiar
+Editar
+{
+  "success": true,
+  "message": "Report resolved successfully"
+}
+👥 USERS
+GET /users
+json
+Copiar
+Editar
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "user",
+      "status": "active",
+      "created_at": "2025-07-01T09:00:00Z"
+    }
+  ]
+}
+PATCH /users/:id/role
+json
+Copiar
+Editar
+{
+  "role": "moderator"
+}
+json
+Copiar
+Editar
+{
+  "success": true,
+  "message": "User role updated"
+}
+⚙️ SETTINGS
+GET /settings
+json
+Copiar
+Editar
+{
+  "success": true,
+  "data": {
+    "maintenanceMode": false,
+    "allowRegistrations": true
+  }
+}
+PATCH /settings
+json
+Copiar
+Editar
+{
+  "maintenanceMode": true
+}
+json
+Copiar
+Editar
+{
+  "success": true,
+  "message": "Settings updated"
+}
+🧩 CHALLENGES
+GET /challenges
+json
+Copiar
+Editar
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Desafío por el agua",
+      "status": "active",
+      "participants": 42,
+      "created_at": "2025-07-01T08:00:00Z"
+    }
+  ]
+}
+POST /challenges
+json
+Copiar
+Editar
+{
+  "title": "Nuevo desafío",
+  "description": "Descripción del reto",
+  "deadline": "2025-07-15T23:59:00Z"
+}
+json
+Copiar
+Editar
+{
+  "success": true,
+  "message": "Challenge created successfully"
+}
+💳 PAYMENTS
+GET /payments
+json
+Copiar
+Editar
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "userId": "uuid",
+      "amount": 5000,
+      "currency": "COP",
+      "status": "completed",
+      "created_at": "2025-07-08T11:00:00Z"
+    }
+  ]
+}
+POST /payments
+json
+Copiar
+Editar
+{
+  "userId": "uuid",
+  "amount": 10000,
+  "currency": "COP"
+}
+json
+Copiar
+Editar
+{
+  "success": true,
+  "message": "Payment processed"
+}
+🧭 SYSTEM STATUS
+GET /system-status
+json
+Copiar
+Editar
+{
+  "success": true,
+  "data": {
+    "uptime": "48h",
+    "cpu_usage": 23.5,
+    "memory_usage": 63.2,
+    "services": {
+      "database": "online",
+      "storage": "online",
+      "auth": "online"
+    }
+  }
+}
+POST /system-status/logs
+json
+Copiar
+Editar
+{
+  "service": "auth",
+  "message": "Token verification delay",
+  "level": "warning"
+}
+json
+Copiar
+Editar
+{
+  "success": true,
+  "message": "Log registered"
+}
+❌ ERROR GENÉRICO
+json
+Copiar
+Editar
 {
   "success": false,
   "error": "Mensaje claro para mostrar en UI"
 }
-```
-
----
-
-## ✅ Headers obligatorios
-
-```http
+✅ Headers obligatorios
+http
+Copiar
+Editar
 Authorization: Bearer eyJhbGciOi...
 Content-Type: application/json
-```
