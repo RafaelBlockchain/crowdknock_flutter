@@ -1,7 +1,13 @@
+
 # 📘 API RESPONSES – CrowdKnock Backend
 
-Esta guía documenta las respuestas esperadas por el frontend Flutter al consumir la API REST protegida con JWT. Todas las rutas requieren autenticación con:
+Esta guía documenta las respuestas esperadas por el frontend Flutter al consumir la API REST protegida con JWT.  
+**Todas las rutas requieren autenticación** con:
 
+```
+Authorization: Bearer <token>
+Content-Type: application/json
+```
 
 ---
 
@@ -16,7 +22,11 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
   "email": "admin@example.com",
   "password": "admin123"
 }
+```
 
+**Response 200:**
+
+```json
 {
   "success": true,
   "data": {
@@ -29,7 +39,15 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     }
   }
 }
+```
 
+---
+
+### GET /auth/me
+
+**Response 200:**
+
+```json
 {
   "success": true,
   "data": {
@@ -39,7 +57,15 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     "role": "admin"
   }
 }
+```
 
+---
+
+## 📈 METRICS
+
+### GET /metrics/daily
+
+```json
 {
   "success": true,
   "data": [
@@ -51,7 +77,13 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     }
   ]
 }
+```
 
+---
+
+### GET /metrics/users
+
+```json
 {
   "success": true,
   "data": {
@@ -60,7 +92,13 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     "newUsersToday": 23
   }
 }
+```
 
+---
+
+### GET /metrics/content
+
+```json
 {
   "success": true,
   "data": {
@@ -70,7 +108,13 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     "rejected": 50
   }
 }
+```
 
+---
+
+### GET /metrics/challenges
+
+```json
 {
   "success": true,
   "data": {
@@ -79,7 +123,15 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     "completed": 140
   }
 }
+```
 
+---
+
+## 📦 CONTENT
+
+### GET /content
+
+```json
 {
   "success": true,
   "data": [
@@ -92,7 +144,15 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     }
   ]
 }
+```
 
+---
+
+## 🚨 REPORTS
+
+### GET /reports
+
+```json
 {
   "success": true,
   "data": [
@@ -106,11 +166,24 @@ Esta guía documenta las respuestas esperadas por el frontend Flutter al consumi
     }
   ]
 }
+```
 
+---
+
+## ❌ ERROR GENÉRICO
+
+```json
 {
   "success": false,
   "error": "Mensaje claro para mostrar en UI"
 }
+```
 
+---
+
+## ✅ Headers obligatorios
+
+```http
 Authorization: Bearer eyJhbGciOi...
 Content-Type: application/json
+```
