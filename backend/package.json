@@ -47,6 +47,11 @@
 }
 
   "scripts": {
+  "test": "jest",
+  "test:metrics": "jest tests/metrics.test.js"
+}
+
+  "scripts": {
   "test:create-db": "node scripts/createTestDb.js",
   "test:db-reset": "node scripts/resetTestDb.js",
   "test:full": "npm run test:create-db && npm run test:db-reset && npm test"
