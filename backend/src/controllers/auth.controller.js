@@ -13,6 +13,32 @@ function generateToken(user) {
   );
 }
 
+const {
+  validateEmail,
+  validatePassword,
+  validateRequired,
+} = require('../utils/validation');
+
+exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!validateRequired(email) || !validateEmail(email)) {
+      return res.status(400).json({ error: 'Email inválido' });
+    }
+
+    if (!validateRequired(password) || !validatePassword(password)) {
+      return res.status(400).json({ error: 'Contraseña inválida' });
+    }
+
+    // lógica de login...
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+
 const authController = {
   // ✅ Registro de usuario
   register: async (req, res) => {
