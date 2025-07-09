@@ -5,21 +5,20 @@ backend/
 ├── .env.example
 ├── .env.test
 ├── Dockerfile
-├── jest.config.js
-├── jest.global-setup.js
-├── jest.setup.js
 ├── Makefile
-├── package.json
 ├── README.md
-├── server.js
 ├── db/
 │   ├── init.js
 │   ├── init.sql
 │   ├── seed.js
 │   ├── seed.sql
-├── docs/                                     # Swagger (si se autogenera)
+├── docs/
 │   ├── api-responses.md
 │   ├── swagger.yaml
+├── jest.config.js
+├── jest.global-setup.js
+├── jest.setup.js
+├── package.json
 ├── scripts/
 │   ├── createTestDb.js
 │   ├── init.sql
@@ -29,16 +28,13 @@ backend/
 │   ├── seed.js
 │   ├── seed.sql
 │   ├── syncModels.js
+├── server.js
 ├── src/
-│   ├── app.js                                # Inicializa middlewares y rutas
-│   ├── index.js
-│   ├── main.js
-│   ├── main.ts
-│   ├── server.js                             # Inicia el servidor
-│   ├── config/                               # Configuración global (.env, DB)
+│   ├── app.js
+│   ├── config/
 │   │   ├── db.js
 │   │   ├── env.js
-│   ├── controllers/                          # Reciben requests y delegan a servicios
+│   ├── controllers/
 │   │   ├── auth.controller.js
 │   │   ├── challengesController.js
 │   │   ├── content.controller.js
@@ -50,29 +46,34 @@ backend/
 │   │   ├── system.controller.js
 │   │   ├── system_status.controller.ts
 │   │   ├── users.controller.js
-│   ├── docs/                                 # Swagger (si se autogenera)
+│   ├── docs/
 │   │   ├── swagger.js
-│   ├── middlewares/                          # auth, roles, errores, validación
+│   ├── index.js
+│   ├── main.js
+│   ├── main.ts
+│   ├── middlewares/
 │   │   ├── auth.js
 │   │   ├── authMiddleware.js
 │   │   ├── errorHandler.js
+│   │   ├── rateLimiter.js
 │   │   ├── roleMiddleware.js
 │   │   ├── validationMiddleware.js
-│   ├── models/                               # Sequelize Models
+│   ├── models/
 │   │   ├── Challenge.js
 │   │   ├── Content.js
-│   │   ├── index.js
 │   │   ├── Metric.js
 │   │   ├── Payment.js
 │   │   ├── Report.js
 │   │   ├── Setting.js
-│   │   ├── systemStatus.model.js
 │   │   ├── User.js
-│   ├── routes/                               # Rutas Express
+│   │   ├── index.js
+│   │   ├── systemStatus.model.js
+│   ├── routes/
 │   │   ├── auth.routes.js
 │   │   ├── challengesRoutes.js
 │   │   ├── content.routes.js
 │   │   ├── docs.routes.js
+│   │   ├── metrics.Routes.js
 │   │   ├── metricsRoutes.js
 │   │   ├── moderation.routes.js
 │   │   ├── payments.routes.js
@@ -82,19 +83,32 @@ backend/
 │   │   ├── system_status.routes.ts
 │   │   ├── users.js
 │   │   ├── users.routes.js
-│   ├── services/                             # Lógica de negocio
+│   ├── server.js
+│   ├── services/
 │   │   ├── content.service.js
 │   │   ├── metrics.service.js
 │   │   ├── payment.service.js
 │   │   ├── report.service.js
-│   │   ├── system_status.service.ts
 │   │   ├── systemStatus.service.js
+│   │   ├── system_status.service.ts
 │   │   ├── user.service.js
-│   ├── utils/                               # JWT, email, helpers
-│       ├── email.js
-│       ├── jwt.js
-│       ├── token.js
-│       ├── validate.js
+│   ├── utils/
+│   │   ├── email.js
+│   │   ├── jwt.js
+│   │   ├── token.js
+│   │   ├── validation.js
+├── tests/
+│   ├── auth.test.js
+│   ├── challenges.test.js
+│   ├── content.test.js
+│   ├── dashboard.test.js
+│   ├── metrics.test.js
+│   ├── moderation.test.js
+│   ├── payments.test.js
+│   ├── reports.test.js
+│   ├── settings.test.js
+│   ├── setup.js
+│   ├── system-status.test.js
 
 
 
