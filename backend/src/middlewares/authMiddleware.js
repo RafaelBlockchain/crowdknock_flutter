@@ -14,13 +14,15 @@ function authMiddleware(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    // Aquí asignamos la info del usuario al request para usar en otros middlewares o rutas
+
+    // Asignar la información relevante del usuario al objeto request
     req.user = {
       id: decoded.id,
       name: decoded.name,
-      role: decoded.role,
       email: decoded.email,
+      role: decoded.role
     };
+
     next();
   } catch (error) {
     return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
@@ -28,4 +30,3 @@ function authMiddleware(req, res, next) {
 }
 
 module.exports = authMiddleware;
-
