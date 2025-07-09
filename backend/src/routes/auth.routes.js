@@ -2,25 +2,11 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 const { body } = require('express-validator');
 const { validateRequest } = require('../middlewares/validationMiddleware');
 
-
-
 // ✅ Registro de usuario
-router.post('/register', authController.register);
-
-// ✅ Login de usuario
-router.post(
-  '/login',
-  [
-    body('email').isEmail().withMessage('Email inválido'),
-    body('password').notEmpty().withMessage('La contraseña es obligatoria')
-  ],
-  validateRequest,
-  authController.login
-);
-
 router.post(
   '/register',
   [
@@ -32,10 +18,16 @@ router.post(
   authController.register
 );
 
-// ✅ protección con middleware
-router.get('/', authMiddleware, controller.handler);
-router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
-
+// ✅ Login de usuario
+router.post(
+  '/login',
+  [
+    body('email').isEmail().withMessage('Email inválido'),
+    body('password').notEmpty().withMessage('La contraseña es obligatoria')
+  ],
+  validateRequest,
+  authController.login
+);
 
 // ✅ Recuperación de contraseña
 router.post('/reset-password', authController.resetPassword);
@@ -75,10 +67,13 @@ router.get('/me', authMiddleware, authController.getCurrentUser);
  *               properties:
  *                 token:
  *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       401:
  *         description: Credenciales inválidas
+ */
 
- /**
+/**
  * @swagger
  * /auth/me:
  *   get:
@@ -94,17 +89,10 @@ router.get('/me', authMiddleware, authController.getCurrentUser);
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                 name:
- *                   type: string
- *                 email:
- *                   type: string
- *                 role:
- *                   type: string
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
  *       401:
  *         description: Token no válido o no enviado
  */
-router.get('/me', authMiddleware, authController.me);
-router.post('/login', authController.login);
+
 module.exports = router;
