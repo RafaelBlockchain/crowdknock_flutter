@@ -3,7 +3,7 @@
 
 Este es el backend del proyecto **CrowdKnock**, construido con **Node.js + Express** y una base de datos **PostgreSQL**. La aplicación utiliza autenticación con **JWT**, separación por capas, y una arquitectura modular orientada a servicios.
 
----
+--- 
 
 ## 📁 Estructura del proyecto
 
