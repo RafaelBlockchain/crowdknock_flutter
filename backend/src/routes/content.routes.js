@@ -5,16 +5,19 @@ const contentController = require('../controllers/content.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Obtener todo el contenido (requiere autenticación)
-router.get('/', authMiddleware, contentController.getAllContent);
+// 🔐 Proteger todas las rutas con autenticación
+router.use(authMiddleware);
+
+// ✅ Obtener todo el contenido (usuarios autenticados)
+router.get('/', contentController.getAllContent);
 
 // ✅ Crear nuevo contenido (solo admin)
-router.post('/', authMiddleware, roleMiddleware(['admin']), contentController.createContent);
+router.post('/', roleMiddleware(['admin']), contentController.createContent);
 
 // ✅ Actualizar contenido (solo admin)
-router.put('/:id', authMiddleware, roleMiddleware(['admin']), contentController.updateContent);
+router.put('/:id', roleMiddleware(['admin']), contentController.updateContent);
 
 // ✅ Eliminar contenido (solo admin)
-router.delete('/:id', authMiddleware, roleMiddleware(['admin']), contentController.deleteContent);
+router.delete('/:id', roleMiddleware(['admin']), contentController.deleteContent);
 
 module.exports = router;
