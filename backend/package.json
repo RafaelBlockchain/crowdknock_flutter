@@ -37,6 +37,11 @@
 }
 
   "scripts": {
+  "start": "node src/main.js",
+  "dev": "nodemon src/main.js"
+}
+  
+  "scripts": {
   "test": "cross-env NODE_ENV=test jest --runInBand",
   "test:db-reset": "node scripts/resetTestDb.js"
 }
