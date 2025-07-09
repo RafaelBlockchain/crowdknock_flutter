@@ -1,20 +1,23 @@
 const express = require('express');
 const router = express.Router();
 
-const challengesController = require('../controllers/challengesController');
+const challengesController = require('../controllers/challenges.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Obtener todos los desafíos (requiere estar autenticado)
-router.get('/', authMiddleware, challengesController.getAllChallenges);
+// Middleware base: autenticación requerida para todas las rutas de desafíos
+router.use(authMiddleware);
 
-// ✅ Crear un nuevo desafío (solo admin)
-router.post('/', authMiddleware, roleMiddleware('admin'), challengesController.createChallenge);
+// ✅ Obtener todos los desafíos (usuarios autenticados)
+router.get('/', challengesController.getAllChallenges);
 
-// ✅ Actualizar un desafío (solo admin)
-router.put('/:id', authMiddleware, roleMiddleware('admin'), challengesController.updateChallenge);
+// ✅ Crear desafío (solo admin)
+router.post('/', roleMiddleware('admin'), challengesController.createChallenge);
 
-// ✅ Eliminar un desafío (solo admin)
-router.delete('/:id', authMiddleware, roleMiddleware('admin'), challengesController.deleteChallenge);
+// ✅ Actualizar desafío por ID (solo admin)
+router.put('/:id', roleMiddleware('admin'), challengesController.updateChallenge);
+
+// ✅ Eliminar desafío por ID (solo admin)
+router.delete('/:id', roleMiddleware('admin'), challengesController.deleteChallenge);
 
 module.exports = router;
