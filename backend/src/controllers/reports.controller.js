@@ -1,88 +1,50 @@
-const db = require('../config/db');
+const reportsService = require('../services/reports.service');
 
-// ✅ Obtener todos los reportes
-const getAllReports = async (req, res) => {
+exports.getAllReports = async (req, res) => {
   try {
-    const result = await db.query(`
-      SELECT r.id, r.type, r.reason, r.status, r.created_at,
-             r.content_id, r.comment_id,
-             c.title AS content_title,
-             cm.text AS comment_text
-      FROM reports r
-      LEFT JOIN content c ON r.content_id = c.id
-      LEFT JOIN comments cm ON r.comment_id = cm.id
-      ORDER BY r.created_at DESC
-    `);
-    res.json({ success: true, data: result.rows });
+    const reports = await reportsService.getPendingReports();
+    res.json({ success: true, data: reports });
   } catch (error) {
-    console.error('Error al obtener reportes:', error);
+    console.error('Error fetching reports:', error);
     res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// ✅ Aprobar reporte (eliminar contenido/comentario y actualizar reporte)
-const approveReport = async (req, res) => {
-  const { id } = req.params;
+exports.approveReport = async (req, res) => {
   try {
-    const reportRes = await db.query(`SELECT * FROM reports WHERE id = $1`, [id]);
-    const report = reportRes.rows[0];
-
-    if (!report) {
+    const updated = await reportsService.approve(req.params.id);
+    if (!updated) {
       return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
     }
-
-    if (report.content_id) {
-      await db.query(`DELETE FROM content WHERE id = $1`, [report.content_id]);
-    } else if (report.comment_id) {
-      await db.query(`DELETE FROM comments WHERE id = $1`, [report.comment_id]);
-    }
-
-    await db.query(`UPDATE reports SET status = 'aprobado' WHERE id = $1`, [id]);
-
-    res.json({ success: true, message: 'Reporte aprobado y contenido eliminado' });
+    res.json({ success: true, message: 'Reporte aprobado' });
   } catch (error) {
-    console.error('Error al aprobar reporte:', error);
+    console.error('Error approving report:', error);
     res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
 };
 
-// ✅ Ignorar reporte
-const ignoreReport = async (req, res) => {
-  const { id } = req.params;
+exports.deleteReportedItem = async (req, res) => {
   try {
-    const result = await db.query(`UPDATE reports SET status = 'ignorado' WHERE id = $1 RETURNING id`, [id]);
-
-    if (result.rowCount === 0) {
+    const updated = await reportsService.deleteReportedContent(req.params.id);
+    if (!updated) {
       return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
     }
+    res.json({ success: true, message: 'Contenido eliminado y reporte actualizado' });
+  } catch (error) {
+    console.error('Error deleting reported content:', error);
+    res.status(500).json({ success: false, error: 'Error interno del servidor' });
+  }
+};
 
+exports.ignoreReport = async (req, res) => {
+  try {
+    const ignored = await reportsService.ignore(req.params.id);
+    if (!ignored) {
+      return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
+    }
     res.json({ success: true, message: 'Reporte ignorado' });
   } catch (error) {
-    console.error('Error al ignorar reporte:', error);
+    console.error('Error ignoring report:', error);
     res.status(500).json({ success: false, error: 'Error interno del servidor' });
   }
-};
-
-// ✅ Eliminar reporte completamente
-const deleteReport = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await db.query(`DELETE FROM reports WHERE id = $1 RETURNING id`, [id]);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ success: false, error: 'Reporte no encontrado' });
-    }
-
-    res.json({ success: true, message: 'Reporte eliminado' });
-  } catch (error) {
-    console.error('Error al eliminar reporte:', error);
-    res.status(500).json({ success: false, error: 'Error interno del servidor' });
-  }
-};
-
-module.exports = {
-  getAllReports,
-  approveReport,
-  ignoreReport,
-  deleteReport,
 };
