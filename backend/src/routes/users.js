@@ -4,6 +4,10 @@ const router = express.Router();
 const usersController = require('../controllers/usersController');
 const authMiddleware = require('../middleware/auth');
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+
 // Todas las rutas están protegidas con JWT
 router.use(authMiddleware.verifyToken);
 
