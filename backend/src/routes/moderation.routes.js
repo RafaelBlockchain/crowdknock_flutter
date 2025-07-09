@@ -5,29 +5,29 @@ const moderationController = require('../controllers/moderation.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Obtener lista de reportes pendientes
-router.get('/reports', authMiddleware, moderationController.getAllReports);
+// 🔐 Proteger todas las rutas con autenticación
+router.use(authMiddleware);
 
-// ✅ Aprobar contenido/comentario reportado
+// ✅ Obtener todos los reportes pendientes
+router.get('/reports', moderationController.getAllReports);
+
+// ✅ Aprobar contenido/comentario reportado (solo admin)
 router.post(
   '/reports/:id/approve',
-  authMiddleware,
   roleMiddleware(['admin']),
   moderationController.approveReport
 );
 
-// ✅ Eliminar contenido/comentario reportado
+// ✅ Eliminar contenido/comentario reportado (solo admin)
 router.post(
   '/reports/:id/delete',
-  authMiddleware,
   roleMiddleware(['admin']),
   moderationController.deleteReport
 );
 
-// ✅ Ignorar un reporte
+// ✅ Ignorar reporte (solo admin)
 router.post(
   '/reports/:id/ignore',
-  authMiddleware,
   roleMiddleware(['admin']),
   moderationController.ignoreReport
 );
