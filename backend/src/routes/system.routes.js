@@ -5,6 +5,10 @@ import { authorizeRoles } from '../middlewares/roleMiddleware.js';
 
 const router = express.Router();
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+
 router.get('/status', authenticateToken, authorizeRoles('admin'), getSystemStatus);
 
 export default router;
