@@ -1,24 +1,21 @@
 const express = require('express');
 const router = express.Router();
 
-const reportsController = require('../controllers/reportsController');
-const { verifyToken } = require('../middleware/auth');
+const reportsController = require('../controllers/reports.controller');
+const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ protección con middleware
-router.get('/', authMiddleware, controller.handler);
-router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+// ✅ Obtener todos los reportes (autenticado)
+router.get('/', authMiddleware, reportsController.getAllReports);
 
-// Obtener todos los reportes pendientes o procesados
-router.get('/', verifyToken, reportsController.getAllReports);
+// ✅ Aprobar reporte (requiere admin)
+router.post('/:id/approve', authMiddleware, roleMiddleware(['admin']), reportsController.approveReport);
 
-// Aprobar reporte (elimina el contenido/comentario)
-router.post('/:id/approve', verifyToken, reportsController.approveReport);
+// ✅ Ignorar reporte (requiere admin)
+router.post('/:id/ignore', authMiddleware, roleMiddleware(['admin']), reportsController.ignoreReport);
 
-// Ignorar reporte (marcar como resuelto sin eliminar)
-router.post('/:id/ignore', verifyToken, reportsController.ignoreReport);
-
-// Eliminar reporte
-router.delete('/:id', verifyToken, reportsController.deleteReport);
+// ✅ Eliminar reporte (requiere admin)
+router.delete('/:id', authMiddleware, roleMiddleware(['admin']), reportsController.deleteReport);
 
 module.exports = router;
 
