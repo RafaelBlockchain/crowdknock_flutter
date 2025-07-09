@@ -3,6 +3,9 @@ const router = express.Router();
 const settingsController = require('../controllers/settings.controller');
 const authMiddleware = require('../middleware/auth');
 
+// ✅ protección con middleware
+router.get('/', authMiddleware, controller.handler);
+router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
 
 // Proteger todas las rutas con JWT
 router.use(authMiddleware.verifyToken);
