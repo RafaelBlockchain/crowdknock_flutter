@@ -1,26 +1,35 @@
 const { Report, Content, User } = require('../models');
 
 /**
- * Obtener todos los reportes, ordenados por fecha descendente
+ * Obtener todos los reportes con su contenido y usuario asociados
  */
-async function getAllReports() {
+exports.getAll = async () => {
   try {
     return await Report.findAll({
-      include: [Content, User],
+      include: [
+        {
+          model: Content,
+          attributes: ['id', 'title', 'type'],
+        },
+        {
+          model: User,
+          attributes: ['id', 'name', 'email'],
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
   } catch (error) {
     console.error('Error al obtener reportes:', error);
     throw new Error('No se pudieron obtener los reportes');
   }
-}
+};
 
 /**
- * Resolver un reporte
+ * Resolver un reporte con una descripción o estado
  * @param {string} id - ID del reporte
- * @param {string} resolution - Descripción o estado de resolución
+ * @param {string} resolution - Texto de resolución
  */
-async function resolveReport(id, resolution) {
+exports.resolve = async (id, resolution) => {
   try {
     const report = await Report.findByPk(id);
     if (!report) {
@@ -29,14 +38,13 @@ async function resolveReport(id, resolution) {
       throw error;
     }
 
-    return await report.update({ resolved: true, resolution });
+    return await report.update({
+      resolved: true,
+      resolution: resolution || 'Resuelto',
+      resolvedAt: new Date(),
+    });
   } catch (error) {
     console.error(`Error al resolver reporte ${id}:`, error);
     throw new Error('No se pudo resolver el reporte');
   }
-}
-
-module.exports = {
-  getAllReports,
-  resolveReport,
 };
