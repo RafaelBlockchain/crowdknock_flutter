@@ -1,21 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
-const usersController = require('../controllers/usersController');
-const { verifyToken } = require('../middleware/auth');
+const usersController = require('../controllers/users.controller');
+const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ protección con middleware
-router.get('/', authMiddleware, controller.handler);
-router.post('/', authMiddleware, roleMiddleware(['admin']), controller.handler);
+// ✅ Proteger todas las rutas con JWT
+router.use(authMiddleware);
 
-// Obtener todos los usuarios
-router.get('/', verifyToken, usersController.getAllUsers);
+// ✅ Obtener todos los usuarios (solo admin)
+router.get('/', roleMiddleware(['admin']), usersController.getAllUsers);
 
-// Actualizar datos de un usuario
-router.put('/:id', verifyToken, usersController.updateUser);
+// ✅ Actualizar datos de un usuario (solo admin)
+router.put('/:id', roleMiddleware(['admin']), usersController.updateUser);
 
-// Banear usuario
-router.patch('/:id/ban', verifyToken, usersController.banUser);
+// ✅ Banear usuario (solo admin)
+router.patch('/:id/ban', roleMiddleware(['admin']), usersController.banUser);
 
 module.exports = router;
-
