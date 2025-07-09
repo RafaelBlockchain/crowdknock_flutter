@@ -1,10 +1,9 @@
 // backend/src/middlewares/authMiddleware.js
 
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = process.env;
+const { verifyToken } = require('../utils/jwt');
 
 function authMiddleware(req, res, next) {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers['authorization'];
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ success: false, error: 'Token no proporcionado' });
@@ -13,18 +12,11 @@ function authMiddleware(req, res, next) {
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    // Asignar la información relevante del usuario al objeto request
-    req.user = {
-      id: decoded.id,
-      name: decoded.name,
-      email: decoded.email,
-      role: decoded.role
-    };
-
+    const decoded = verifyToken(token);
+    req.user = decoded; // Agrega los datos del usuario a la request
     next();
-  } catch (error) {
+  } catch (err) {
+    console.error('Error en authMiddleware:', err);
     return res.status(401).json({ success: false, error: 'Token inválido o expirado' });
   }
 }
