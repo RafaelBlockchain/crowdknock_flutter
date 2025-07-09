@@ -1,24 +1,27 @@
 /**
- * Obtener estado del sistema
- * - Uptime (segundos desde que se inició el proceso)
- * - Timestamp actual
- * - Uso de memoria (heap y RSS)
- * - Uso de CPU (user/system en microsegundos)
+ * Servicio para obtener el estado actual del sistema.
+ * Incluye:
+ * - Tiempo de actividad
+ * - Timestamp
+ * - Uso de memoria
+ * - Uso de CPU
  */
-async function getSystemStatus() {
+exports.getSystemStatus = async () => {
+  const memoryUsage = process.memoryUsage();
+  const cpu = process.cpuUsage();
+
   return {
-    uptime: parseFloat(process.uptime().toFixed(2)), // segundos
+    uptime: parseFloat(process.uptime().toFixed(2)), // en segundos
     timestamp: new Date().toISOString(),
     memory: {
-      rss: process.memoryUsage().rss,               // memoria total reservada
-      heapTotal: process.memoryUsage().heapTotal,   // memoria total del heap
-      heapUsed: process.memoryUsage().heapUsed,     // memoria usada del heap
-      external: process.memoryUsage().external,     // buffers externos
+      rss: memoryUsage.rss,
+      heapTotal: memoryUsage.heapTotal,
+      heapUsed: memoryUsage.heapUsed,
+      external: memoryUsage.external,
     },
-    cpuUsage: process.cpuUsage(), // { user, system } en microsegundos
+    cpu: {
+      user: cpu.user,     // microsegundos
+      system: cpu.system, // microsegundos
+    },
   };
-}
-
-module.exports = {
-  getSystemStatus,
 };
