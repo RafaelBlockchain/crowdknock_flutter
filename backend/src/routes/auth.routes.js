@@ -6,6 +6,9 @@ const roleMiddleware = require('../middlewares/roleMiddleware');
 const { body } = require('express-validator');
 const { validateRequest } = require('../middlewares/validationMiddleware');
 
+router.post('/auth/reset-request', authController.resetPasswordRequest);
+router.post('/auth/reset-password', authController.resetPassword);
+
 // ✅ Registro de usuario
 router.post(
   '/register',
