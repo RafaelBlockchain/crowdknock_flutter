@@ -37,4 +37,5 @@ services:
       - /app/node_modules
 
 volumes:
-  db_data:
+   - ./db/init/init.sql:/docker-entrypoint-initdb.d/init.sql
+   db_data:
