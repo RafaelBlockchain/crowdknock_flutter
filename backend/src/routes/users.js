@@ -5,16 +5,16 @@ const usersController = require('../controllers/users.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Proteger todas las rutas
+// 🔐 Todas las rutas requieren autenticación
 router.use(authMiddleware);
 
-// ✅ Obtener todos los usuarios (requiere admin)
+// ✅ Obtener todos los usuarios (solo admin)
 router.get('/', roleMiddleware(['admin']), usersController.getAllUsers);
 
-// ✅ Actualizar un usuario (requiere admin)
+// ✅ Actualizar datos de un usuario por ID (solo admin)
 router.put('/:id', roleMiddleware(['admin']), usersController.updateUser);
 
-// ✅ Banear un usuario (requiere admin)
+// ✅ Banear usuario por ID (solo admin)
 router.post('/:id/ban', roleMiddleware(['admin']), usersController.banUser);
 
 module.exports = router;
