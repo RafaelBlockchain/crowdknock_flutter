@@ -1,0 +1,116 @@
+openapi: 3.0.3
+info:
+  title: CrowdKnock API
+  version: 1.0.0
+  description: API REST protegida con JWT para la plataforma CrowdKnock
+servers:
+  - url: http://localhost:3000
+    description: Servidor local de desarrollo
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: string
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      summary: Login de usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login exitoso
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/me:
+    get:
+      summary: Obtener datos del usuario autenticado
+      responses:
+        '200':
+          description: Usuario autenticado
+        '401':
+          description: No autorizado
+
+  /metrics/daily:
+    get:
+      summary: Métricas diarias
+      responses:
+        '200':
+          description: Datos de métricas diarias
+
+  /metrics/users:
+    get:
+      summary: Métricas de usuarios
+      responses:
+        '200':
+          description: Estadísticas de usuarios
+
+  /metrics/content:
+    get:
+      summary: Métricas de contenido
+      responses:
+        '200':
+          description: Estadísticas de contenido
+
+  /metrics/challenges:
+    get:
+      summary: Métricas de desafíos
+      responses:
+        '200':
+          description: Estadísticas de desafíos
+
+  /moderation/reported-content:
+    get:
+      summary: Contenido reportado
+      responses:
+        '200':
+          description: Lista de contenido reportado
+
+  /users:
+    get:
+      summary: Listar usuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+
+  /settings:
+    get:
+      summary: Obtener configuración
+      responses:
+        '200':
+          description: Configuración general
+
+  /system-status:
+    get:
+      summary: Estado del sistema
+      responses:
+        '200':
+          description: Estado actual del sistema
