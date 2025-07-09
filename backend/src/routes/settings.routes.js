@@ -5,13 +5,13 @@ const settingsController = require('../controllers/settings.controller');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// ✅ Proteger todas las rutas con JWT
+// 🔐 Proteger todas las rutas con autenticación JWT
 router.use(authMiddleware);
 
-// ✅ Obtener todas las configuraciones
+// ✅ Obtener todas las configuraciones (usuarios autenticados)
 router.get('/', settingsController.getAllSettings);
 
-// ✅ Actualizar una configuración (solo admin)
+// ✅ Actualizar una configuración por clave (solo admin)
 router.put('/:key', roleMiddleware(['admin']), settingsController.updateSetting);
 
 module.exports = router;
