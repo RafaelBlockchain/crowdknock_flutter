@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../models/content_model.dart';
 import '../services/content_service.dart';
 
-
 class ContentDetailPage extends StatefulWidget {
   final String contentId;
 
@@ -33,38 +32,33 @@ class _ContentDetailPageState extends State<ContentDetailPage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('Contenido no encontrado.'));
+            return const Center(child: Text('Contenido no disponible.'));
           }
 
           final content = snapshot.data!;
+
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(content.title,
-                    style: Theme.of(context).textTheme.headlineMedium),
+                Text(content.title, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 12),
-                Text(
-                  content.type.toUpperCase(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.grey,
-                  ),
-                ),
+                Text("Tipo: ${content.type}", style: const TextStyle(fontWeight: FontWeight.w500)),
+                const SizedBox(height: 8),
+                Text("Autor: ${content.author}"),
+                const SizedBox(height: 8),
+                Text("Fecha: ${content.createdAt.toLocal().toString().substring(0, 16)}"),
                 const SizedBox(height: 24),
                 if (content.imageUrl != null)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                     child: Image.network(content.imageUrl!),
                   ),
                 const SizedBox(height: 24),
-                Text(content.body, style: const TextStyle(fontSize: 16)),
-                const SizedBox(height: 32),
                 Text(
-                  'Autor: ${content.author}',
-                  style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic),
+                  content.body,
+                  style: const TextStyle(fontSize: 16, height: 1.5),
                 ),
               ],
             ),
@@ -72,5 +66,8 @@ class _ContentDetailPageState extends State<ContentDetailPage> {
         },
       ),
     );
+  }
+}
+
   }
 }
