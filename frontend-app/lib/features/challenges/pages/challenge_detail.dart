@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'challenge_submission.dart';
 import '../models/challenge.dart';
 import '../repositories/challenge_repository.dart';
 
@@ -18,6 +19,15 @@ class _ChallengeDetailPageState extends State<ChallengeDetailPage> {
   void initState() {
     super.initState();
     _challengeFuture = ChallengeRepository().fetchChallenge(widget.challengeId);
+  }
+
+  void goToSubmission() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChallengeSubmissionPage(challengeId: widget.challengeId),
+      ),
+    );
   }
 
   @override
@@ -41,34 +51,16 @@ class _ChallengeDetailPageState extends State<ChallengeDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  challenge.title,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
+                Text(challenge.title, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 16),
-                Text(
-                  'Estado: ${challenge.status}',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text('Estado: ${challenge.status}', style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
-                Text(
-                  challenge.description,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Publicado el: ${challenge.createdAt}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text(challenge.description),
                 const SizedBox(height: 40),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('¡Participación registrada!')),
-                    ); 
-                  },
-                  icon: const Icon(Icons.check_circle_outline),
-                  label: const Text('Participar en el Challenge'),
+                  onPressed: goToSubmission,
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Participar'),
                 )
               ],
             ),
