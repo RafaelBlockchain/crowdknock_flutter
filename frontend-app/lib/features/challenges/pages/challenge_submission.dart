@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/challenge_submission_request.dart';
 import '../repositories/challenge_repository.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 
 class ChallengeSubmissionPage extends StatefulWidget {
   final String challengeId;
@@ -14,6 +16,21 @@ class ChallengeSubmissionPage extends StatefulWidget {
 class _ChallengeSubmissionPageState extends State<ChallengeSubmissionPage> {
   final TextEditingController commentCtrl = TextEditingController();
   bool isSubmitting = false;
+
+  File? selectedFile;
+
+Future<void> pickFile() async {
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+  );
+
+  if (result != null && result.files.single.path != null) {
+    setState(() {
+      selectedFile = File(result.files.single.path!);
+    });
+  }
+}
 
   void submitChallenge() async {
   if (commentCtrl.text.trim().isEmpty) return;
