@@ -1,6 +1,35 @@
 const contentService = require('../services/content.service');
 const { pick } = require('../utils/validation');
 
+async function getAll(req, res) {
+  try {
+    const contents = await contentService.getAllContent();
+    res.json(contents);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al obtener contenidos' });
+  }
+}
+
+async function getById(req, res) {
+  try {
+    const content = await contentService.getContentById(req.params.id);
+    if (!content) {
+      return res.status(404).json({ message: 'Contenido no encontrado' });
+    }
+    res.json(content);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error al obtener contenido' });
+  }
+}
+
+module.exports = {
+  getAll,
+  getById,
+};
+
+
 exports.getAllContent = async (req, res, next) => {
   try {
     const contents = await contentService.getAll();
