@@ -14,10 +14,10 @@ class Challenge {
   });
 
   factory Challenge.fromJson(Map<String, dynamic> json) => Challenge(
-        id: json['id'],
-        title: json['title'],
-        description: json['description'],
-        status: json['status'],
-        createdAt: json['createdAt'],
-      );
+    id: json['id'],
+    title: json['title'],
+    description: json['description'],
+    status: json['status'],
+    createdAt: json['createdAt'],
+  );
 }
