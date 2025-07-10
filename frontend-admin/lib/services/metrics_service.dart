@@ -1,51 +1,39 @@
-import 'dart:convert';
-import 'package:frontend_admin/services/api_client.dart';
+import 'package:frontend_admin/services/api_service.dart';
+import 'package:frontend_admin/services/auth_service.dart';
 
 class MetricsService {
-  /// Obtiene métricas generales de la app
+  static Future<ApiService> _api() async {
+    final token = await AuthService.getToken();
+    return ApiService(
+      baseUrl: 'https://api.crowdknock.com/api',
+      jwtToken: token ?? '',
+    );
+  }
+
+  /// 📊 Obtiene métricas generales de la app (usuarios, sesiones, crashes, etc)
   static Future<Map<String, dynamic>> getAppMetrics() async {
-    final response = await ApiClient.get('/metrics/app');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body) as Map<String, dynamic>;
-    } else {
-      throw Exception('Error al obtener métricas de la app: ${response.body}');
-    }
+    final api = await _api();
+    return await api.get('/metrics/app');
   }
 
-  /// Obtiene datos para los gráficos de usuarios activos por día
+  /// 📈 Usuarios activos por día (para gráficos)
   static Future<List<Map<String, dynamic>>> getDailyActiveUsers() async {
-    final response = await ApiClient.get('/metrics/daily-active-users');
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Error al obtener usuarios activos diarios: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/metrics/daily-active-users');
+    return List<Map<String, dynamic>>.from(data);
   }
 
-  /// Obtiene el tiempo promedio de sesión por día
+  /// ⏱ Tiempo promedio de sesión por día
   static Future<List<Map<String, dynamic>>> getSessionDurations() async {
-    final response = await ApiClient.get('/metrics/session-duration');
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Error al obtener duración de sesión: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/metrics/session-duration');
+    return List<Map<String, dynamic>>.from(data);
   }
 
-  /// Obtiene cantidad de errores reportados (crashes, excepciones)
+  /// 🛑 Reportes de fallos (crashes y errores recientes)
   static Future<List<Map<String, dynamic>>> getCrashReports() async {
-    final response = await ApiClient.get('/metrics/crash-reports');
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Error al obtener reportes de fallos: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/metrics/crash-reports');
+    return List<Map<String, dynamic>>.from(data);
   }
 }
