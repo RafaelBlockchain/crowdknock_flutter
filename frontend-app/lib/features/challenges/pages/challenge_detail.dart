@@ -65,7 +65,7 @@ class _ChallengeDetailPageState extends State<ChallengeDetailPage> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('¡Participación registrada!')),
-                    );
+                    ); 
                   },
                   icon: const Icon(Icons.check_circle_outline),
                   label: const Text('Participar en el Challenge'),
