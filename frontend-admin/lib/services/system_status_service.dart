@@ -1,38 +1,33 @@
-import 'dart:convert';
-import 'package:frontend_admin/services/api_client.dart';
+import 'package:frontend_admin/services/api_service.dart';
+import 'package:frontend_admin/services/auth_service.dart';
 
 class SystemStatusService {
-  /// Obtiene el estado general del sistema
+  static Future<ApiService> _api() async {
+    final token = await AuthService.getToken();
+    return ApiService(
+      baseUrl: 'https://api.crowdknock.com/api',
+      jwtToken: token ?? '',
+    );
+  }
+
+  /// 🔄 Estado general del sistema
   static Future<Map<String, dynamic>> getSystemHealth() async {
-    final response = await ApiClient.get('/status/health');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body) as Map<String, dynamic>;
-    } else {
-      throw Exception('Error al obtener estado del sistema: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/status/health');
+    return Map<String, dynamic>.from(data);
   }
 
-  /// Verifica estado de servicios internos (base de datos, colas, cache, etc.)
+  /// 🧩 Estado de servicios internos (DB, Redis, Cola, etc.)
   static Future<List<Map<String, dynamic>>> getServiceStatuses() async {
-    final response = await ApiClient.get('/status/services');
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Error al obtener estado de servicios: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/status/services');
+    return List<Map<String, dynamic>>.from(data);
   }
 
-  /// Verifica estado de uso de recursos del servidor
+  /// 📊 Métricas del servidor (CPU, Memoria, Conexiones, etc.)
   static Future<Map<String, dynamic>> getServerMetrics() async {
-    final response = await ApiClient.get('/status/server-metrics');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body) as Map<String, dynamic>;
-    } else {
-      throw Exception('Error al obtener métricas del servidor: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/status/server-metrics');
+    return Map<String, dynamic>.from(data);
   }
 }
