@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/content_model.dart';
 import '../services/content_service.dart';
 
+
 class ContentDetailPage extends StatefulWidget {
   final String contentId;
 
