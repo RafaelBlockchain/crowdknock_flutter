@@ -4,8 +4,20 @@ require('dotenv').config(); // 🌱 Carga variables de entorno
 
 const app = require('./src/app');
 const db = require('./src/config/db');
+const fs = require('fs');
 
 const PORT = process.env.PORT || 3000;
+
+// Crear carpeta uploads si no existe
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en puerto ${PORT}`);
+});
 
 (async () => {
   try {
