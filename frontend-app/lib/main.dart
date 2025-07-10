@@ -10,6 +10,11 @@ import 'pages/system_status_page.dart';
 import 'pages/app_metrics_page.dart';
 import 'pages/manage_users_page.dart';
 
+MaterialApp(
+  onGenerateRoute: generateRoute,
+  initialRoute: '/',
+)
+
 void main() async{
    WidgetsFlutterBinding.ensureInitialized();
   runApp(const CrowdKnockAdminApp());
