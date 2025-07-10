@@ -1,5 +1,24 @@
 const db = require('../config/db');
 const { pick } = require('../utils/validation');
+const db = require('../../config/db');
+
+async function getAllContent() {
+  const query = 'SELECT * FROM contents ORDER BY created_at DESC';
+  const { rows } = await db.query(query);
+  return rows;
+}
+
+async function getContentById(id) {
+  const query = 'SELECT * FROM contents WHERE id = $1';
+  const { rows } = await db.query(query, [id]);
+  return rows[0];
+}
+
+module.exports = {
+  getAllContent,
+  getContentById,
+};
+
 
 exports.getAll = async () => {
   const result = await db.query(`
