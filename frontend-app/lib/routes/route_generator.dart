@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+
+// Pages
 import '../pages/home_page.dart';
 import '../pages/access_denied_page.dart';
 import '../pages/onboarding_page.dart';
 import '../pages/splash_page.dart';
 import '../pages/not_found_page.dart';
+
+// Features
 import '../features/auth/login_page.dart';
 import '../features/auth/register_page.dart';
 import '../features/challenges/challenge_list.dart';
@@ -12,35 +16,19 @@ import '../features/polls/ui/poll_list_page.dart';
 import '../features/reports/submit_report_screen.dart';
 import '../features/metrics/ui/app_metrics_screen.dart';
 import '../features/setting/ui/settings_screen.dart';
+
+// Routing
 import 'app_routes.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case '/':
       case AppRoutes.splash:
         return MaterialPageRoute(builder: (_) => const SplashPage());
+
       case '/access-denied':
         return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
-
-      Route<dynamic>? generateRoute(RouteSettings settings) {
-  switch (settings.name) {
-    case '/':
-      return MaterialPageRoute(builder: (_) => const SplashPage());
-
-    case '/home':
-      return MaterialPageRoute(builder: (_) => const HomePage());
-
-    case '/access-denied':
-      return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
-
-    // otros casos...
-    
-    default:
-      return MaterialPageRoute(builder: (_) => const NotFoundPage());
-  }
-}
-  
-
 
       case AppRoutes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingPage());
