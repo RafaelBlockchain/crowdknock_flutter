@@ -7,4 +7,8 @@ class ChallengeRepository {
   Future<Challenge> fetchChallenge(String id) {
     return _service.getChallengeDetail(id);
   }
+
+  Future<List<Challenge>> fetchAllChallenges() {
+    return _service.getAllChallenges();
+  }
 }
