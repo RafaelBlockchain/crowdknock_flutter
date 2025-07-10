@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../../pages/not_found_page.dart';
+import '../../pages/access_denied_page.dart';
 
 class RoleGuard extends StatelessWidget {
   final Widget child;
@@ -25,9 +25,10 @@ class RoleGuard extends StatelessWidget {
     final userRole = auth.user?.role;
 
     if (userRole == null || !allowedRoles.contains(userRole)) {
-      return const NotFoundPage(); // o una pantalla de acceso denegado
+      return const AccessDeniedPage();
     }
 
     return child;
   }
 }
+
