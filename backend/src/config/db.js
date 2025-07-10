@@ -1,25 +1,32 @@
-const { Sequelize } = require('sequelize');
-require('dotenv').config();
+// src/config/db.js
 
+const { Sequelize } = require('sequelize');
+
+// Cargar configuración desde .env
 const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
+  process.env.DB_NAME || 'crowdknock',
+  process.env.DB_USER || 'postgres',
+  process.env.DB_PASSWORD || '',
   {
     host: process.env.DB_HOST || 'localhost',
-    dialect: 'postgres',
     port: process.env.DB_PORT || 5432,
-    logging: false,
+    dialect: 'postgres',
+    logging: false, // Desactiva logs en consola
   }
 );
 
-const connectToDB = async () => {
+// Función para probar la conexión
+const connect = async () => {
   try {
     await sequelize.authenticate();
-    console.log('🟢 Conexión con PostgreSQL establecida correctamente.');
+    console.log('📡 Conectado a PostgreSQL con Sequelize');
   } catch (error) {
-    console.error('🔴 Error al conectar con PostgreSQL:', error.message);
+    console.error('❌ Error al conectar con Sequelize:', error.message);
+    throw error;
   }
 };
 
-module.exports = { sequelize, connectToDB };
+module.exports = {
+  connect,
+  sequelize,
+};
