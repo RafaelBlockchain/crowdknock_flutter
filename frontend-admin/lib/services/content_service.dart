@@ -1,43 +1,37 @@
-import 'dart:convert';
-import 'package:frontend_admin/services/api_client.dart';
+import 'package:frontend_admin/services/api_service.dart';
+import 'package:frontend_admin/services/auth_service.dart';
 
 class ContentService {
-  /// Obtiene todos los contenidos (videos, audios, historias)
+  static Future<ApiService> _api() async {
+    final token = await AuthService.getToken();
+    return ApiService(
+      baseUrl: 'https://api.crowdknock.com/api',
+      jwtToken: token ?? '',
+    );
+  }
+
+  /// ✅ Obtiene todos los contenidos (videos, audios, historias)
   static Future<List<Map<String, dynamic>>> getAllContent() async {
-    final response = await ApiClient.get('/content');
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Error al cargar contenidos: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/content');
+    return List<Map<String, dynamic>>.from(data);
   }
 
-  /// Sube un nuevo contenido
+  /// ✅ Sube nuevo contenido
   static Future<void> uploadContent(Map<String, dynamic> newContent) async {
-    final response = await ApiClient.post('/content', newContent);
-
-    if (response.statusCode != 201) {
-      throw Exception('Error al subir contenido: ${response.body}');
-    }
+    final api = await _api();
+    await api.post('/content', newContent);
   }
 
-  /// Edita metadatos del contenido
+  /// ✅ Edita metadatos de contenido por ID
   static Future<void> updateContent(String id, Map<String, dynamic> updates) async {
-    final response = await ApiClient.put('/content/$id', updates);
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al actualizar contenido: ${response.body}');
-    }
+    final api = await _api();
+    await api.put('/content/$id', updates);
   }
 
-  /// Elimina contenido por ID
+  /// ✅ Elimina contenido por ID
   static Future<void> deleteContent(String id) async {
-    final response = await ApiClient.delete('/content/$id');
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al eliminar contenido: ${response.body}');
-    }
+    final api = await _api();
+    await api.delete('/content/$id');
   }
 }
