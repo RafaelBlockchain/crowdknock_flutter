@@ -1,51 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frontend_app/core/models/auth_user.dart';
+import 'package:frontend_app/core/models/user_model.dart';
+import 'package:frontend_app/config/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthProvider extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
   String? _token;
+  UserModel? _user;
 
   String? get token => _token;
-  bool get isAuthenticated => _token != null;
+  UserModel? get user => _user;
+  bool get isAuthenticated => _token != null && _user != null;
 
-  Future<void> loadToken() async {
+  /// Carga el token desde almacenamiento seguro al iniciar la app
+  Future<void> loadSession() async {
     _token = await _storage.read(key: 'jwt_token');
-    notifyListeners();
+    if (_token != null) {
+      ApiConfig.setAuthToken(_token!);
+      await _fetchProfile();
+    }
   }
 
-  AuthUser? _currentUser;
-AuthUser? get currentUser => _currentUser;
-
-Future<void> fetchCurrentUser() async {
-  if (_token == null) return;
-
-  final res = await http.get(
-    Uri.parse('$baseUrl/auth/me'),
-    headers: {'Authorization': 'Bearer $_token'},
-  );
-
-  if (res.statusCode == 200) {
-    final jsonData = json.decode(res.body);
-    _currentUser = AuthUser.fromJson(jsonData);
-    notifyListeners();
-  } else {
-    // Si falla, cerrar sesión
-    await logout();
-  }
-}
-
+  /// Login con token directo (usualmente devuelto por AuthService.login)
   Future<void> login(String token) async {
-    _token = token;
-    await _storage.write(key: 'jwt_token', value: token);
-    notifyListeners();
-  }
-
-  Future<void> logout() async {
-    _token = null;
-    await _storage.delete(key: 'jwt_token');
-    notifyListeners();
-  }
-}
+    _token =_
