@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
+import '../pages/access_denied_page.dart';
 import '../pages/onboarding_page.dart';
 import '../pages/splash_page.dart';
 import '../pages/not_found_page.dart';
@@ -18,6 +19,9 @@ class RouteGenerator {
     switch (settings.name) {
       case AppRoutes.splash:
         return MaterialPageRoute(builder: (_) => const SplashPage());
+      case '/access-denied':
+        return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
+
 
       case AppRoutes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingPage());
