@@ -1,0 +1,16 @@
+### Enviar participación con comentario y archivo adjunto
+
+POST http://localhost:4000/api/challenges/CHALLENGE_ID_AQUI/submissions
+Authorization: Bearer {{TOKEN_AQUI}}
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="comment"
+
+Esta es mi evidencia para el reto.
+--boundary
+Content-Disposition: form-data; name="file"; filename="evidencia.pdf"
+Content-Type: application/pdf
+
+< ./ejemplos/evidencia.pdf
+--boundary--
