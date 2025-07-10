@@ -1,18 +1,16 @@
+// src/main.js
+
 require('dotenv').config(); // Cargar variables de entorno
 
 const app = require('./app');
 const db = require('./config/db');
-const dotenv = require('dotenv');
-dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-
+// Función para iniciar la app
 (async () => {
   try {
-    await db.connect();
+    await db.connect(); // Conexión a la base de datos
     console.log('✅ Conectado a la base de datos PostgreSQL');
 
     app.listen(PORT, () => {
@@ -20,7 +18,6 @@ app.listen(PORT, () => {
     });
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error.message);
-    process.exit(1);
+    process.exit(1); // Salir con código de error
   }
-  
 })();
