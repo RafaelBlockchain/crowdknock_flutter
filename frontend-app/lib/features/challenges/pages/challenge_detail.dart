@@ -30,7 +30,7 @@ class _ChallengeDetailPageState extends State<ChallengeDetailPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: \${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
             return const Center(child: Text('Challenge no encontrado.'));
           }
@@ -47,7 +47,7 @@ class _ChallengeDetailPageState extends State<ChallengeDetailPage> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Estado: \${challenge.status}',
+                  'Estado: ${challenge.status}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
@@ -57,7 +57,7 @@ class _ChallengeDetailPageState extends State<ChallengeDetailPage> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Publicado el: \${challenge.createdAt}',
+                  'Publicado el: ${challenge.createdAt}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 40),
