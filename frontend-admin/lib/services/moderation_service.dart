@@ -1,44 +1,38 @@
-import 'dart:convert';
-import 'package:frontend_admin/services/api_client.dart';
+import 'package:frontend_admin/services/api_service.dart';
+import 'package:frontend_admin/services/auth_service.dart';
 
 class ModerationService {
-  /// Obtiene todos los reportes pendientes
+  static Future<ApiService> _api() async {
+    final token = await AuthService.getToken();
+    return ApiService(
+      baseUrl: 'https://api.crowdknock.com/api',
+      jwtToken: token ?? '',
+    );
+  }
+
+  /// 🧾 Obtener todos los reportes pendientes de moderación
   static Future<List<Map<String, dynamic>>> getPendingReports() async {
-    final response = await ApiClient.get('/moderation/reports');
-
-    if (response.statusCode == 200) {
-      final List data = jsonDecode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
-      throw Exception('Error al cargar reportes: ${response.body}');
-    }
+    final api = await _api();
+    final data = await api.get('/moderation/reports');
+    return List<Map<String, dynamic>>.from(data);
   }
 
-  /// Aprueba el contenido reportado
+  /// ✅ Aprobar contenido reportado
   static Future<void> approveReport(String reportId) async {
-    final response = await ApiClient.post('/moderation/$reportId/approve', {});
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al aprobar reporte: ${response.body}');
-    }
+    final api = await _api();
+    await api.post('/moderation/$reportId/approve', {});
   }
 
-  /// Elimina el contenido reportado
+  /// 🗑 Eliminar contenido reportado
   static Future<void> deleteReportedContent(String reportId) async {
-    final response = await ApiClient.post('/moderation/$reportId/delete', {});
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al eliminar contenido reportado: ${response.body}');
-    }
+    final api = await _api();
+    await api.post('/moderation/$reportId/delete', {});
   }
 
-  /// Ignora un reporte
+  /// 🚫 Ignorar reporte
   static Future<void> ignoreReport(String reportId) async {
-    final response = await ApiClient.post('/moderation/$reportId/ignore', {});
-
-    if (response.statusCode != 200) {
-      throw Exception('Error al ignorar reporte: ${response.body}');
-    }
+    final api = await _api();
+    await api.post('/moderation/$reportId/ignore', {});
   }
 }
 
