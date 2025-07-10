@@ -1,6 +1,9 @@
 import '../../../core/services/api_service.dart';
 import '../models/challenge.dart';
 import '../models/challenge_submission_request.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class ChallengeService {
   final ApiService _api = ApiService();
@@ -14,19 +17,30 @@ class ChallengeService {
     }
   }
 
-  
   Future<void> submitChallengeParticipation(
     String challengeId, ChallengeSubmissionRequest data) async {
-    final response = await _api.post(
-    '/challenges/$challengeId/submissions',
-    body: data.toJson(),
-   );
+  final uri = Uri.parse('${_api.baseUrl}/challenges/$challengeId/submissions');
 
-   if (response.statusCode != 200) {
-    throw Exception(response.data['message'] ?? 'Error al enviar participación');
+  final request = http.MultipartRequest('POST', uri)
+    ..headers.addAll(await _api.headers)
+    ..fields['comment'] = data.comment;
+
+  if (data.file != null) {
+    final file = await http.MultipartFile.fromPath(
+      'file',
+      data.file!.path,
+      contentType: MediaType('application', 'octet-stream'), // Cambia si solo aceptas imágenes
+    );
+    request.files.add(file);
+  }
+
+  final streamedResponse = await request.send();
+  final response = await http.Response.fromStream(streamedResponse);
+
+  if (response.statusCode != 200) {
+    throw Exception('Error: ${response.body}');
   }
 }
-
   
   Future<List<Challenge>> getAllChallenges() async {
     final response = await _api.get('/challenges');
