@@ -27,7 +27,7 @@ class _ChallengeListPageState extends State<ChallengeListPage> {
       ),
     );
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,3 +64,4 @@ class _ChallengeListPageState extends State<ChallengeListPage> {
     );
   }
 }
+
