@@ -58,7 +58,19 @@ Future<void> pickFile() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Participar en el Reto")),
-      body: Padding(
+      body:
+      TextButton.icon(
+  onPressed: pickFile,
+  icon: const Icon(Icons.attach_file),
+  label: const Text("Adjuntar evidencia"),
+),
+if (selectedFile != null)
+  Text(
+    'Archivo: ${selectedFile!.path.split('/').last}',
+    style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic),
+),
+
+      Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
