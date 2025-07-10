@@ -1,4 +1,7 @@
-require('dotenv').config(); // Carga variables de entorno
+// main.js
+
+require('dotenv').config(); // 🌱 Carga variables de entorno
+
 const app = require('./src/app');
 const db = require('./src/config/db');
 
@@ -6,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 (async () => {
   try {
-    // 🗄️ Verifica conexión con PostgreSQL
+    // 🗄️ Conexión con PostgreSQL
     await db.connect();
     console.log('✅ Conexión exitosa a PostgreSQL');
 
