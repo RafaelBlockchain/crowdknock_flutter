@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/challenge_submission_request.dart';
+import '../repositories/challenge_repository.dart';
 
 class ChallengeSubmissionPage extends StatefulWidget {
   final String challengeId;
@@ -14,25 +16,26 @@ class _ChallengeSubmissionPageState extends State<ChallengeSubmissionPage> {
   bool isSubmitting = false;
 
   void submitChallenge() async {
-    setState(() => isSubmitting = true);
+  if (commentCtrl.text.trim().isEmpty) return;
 
-    try {
-      // TODO: Lógica real para enviar participación (API POST)
-      await Future.delayed(const Duration(seconds: 2)); // Simula red
+  setState(() => isSubmitting = true);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Participación enviada con éxito')),
-      );
+  try {
+    final data = ChallengeSubmissionRequest(comment: commentCtrl.text.trim());
+    await ChallengeRepository().submitParticipation(widget.challengeId, data);
 
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al enviar: $e')),
-      );
-    } finally {
-      setState(() => isSubmitting = false);
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Participación enviada con éxito')),
+    );
+    Navigator.pop(context);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error al enviar: $e')),
+    );
+  } finally {
+    setState(() => isSubmitting = false);
   }
+}
 
   @override
   Widget build(BuildContext context) {
