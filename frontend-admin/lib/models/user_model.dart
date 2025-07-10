@@ -5,14 +5,15 @@ class UserModel {
   final String name;
   final String email;
   final String role;
+  final bool isActive;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
     required this.role,
+    required this.isActive,
   });
-
   Map<String, dynamic> toJson() {
   return {
     'name': name,
@@ -22,12 +23,12 @@ class UserModel {
   };
 }
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'].toString(),
-      name: json['name'],
-      email: json['email'],
-      role: json['role'],
-    );
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        id: json['id'],
+        name: json['name'],
+        email: json['email'],
+        role: json['role'],
+        isActive: json['is_active'] ?? true,
+      );
+   }
 }
