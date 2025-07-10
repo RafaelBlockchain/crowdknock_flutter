@@ -22,6 +22,25 @@ class RouteGenerator {
       case '/access-denied':
         return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
 
+      Route<dynamic>? generateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case '/':
+      return MaterialPageRoute(builder: (_) => const SplashPage());
+
+    case '/home':
+      return MaterialPageRoute(builder: (_) => const HomePage());
+
+    case '/access-denied':
+      return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
+
+    // otros casos...
+    
+    default:
+      return MaterialPageRoute(builder: (_) => const NotFoundPage());
+  }
+}
+  
+
 
       case AppRoutes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingPage());
