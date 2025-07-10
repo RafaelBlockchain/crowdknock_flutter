@@ -9,6 +9,28 @@ import 'pages/payments_page.dart';
 import 'pages/system_status_page.dart';
 import 'pages/app_metrics_page.dart';
 import 'pages/manage_users_page.dart';
+import 'package:flutter/material.dart';
+import 'routes/route_generator.dart';
+import 'routes/app_routes.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'CrowdKnock',
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: RouteGenerator.generateRoute,
+    );
+  }
+}
+
 
 MaterialApp(
   onGenerateRoute: generateRoute,
