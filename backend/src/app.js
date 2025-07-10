@@ -18,6 +18,7 @@ const systemStatusRoutes = require('./routes/system_status.routes');
 const docsRoutes = require('./routes/docs.routes');
 
 const app = express();
+app.use(express.json());
 
 // Swagger UI Express
 const express = require('express');
@@ -48,6 +49,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/system', systemRoutes);
 app.use('/api/system-status', systemStatusRoutes);
 app.use('/', docsRoutes);
+app.use('/api', contentRoutes);
 
 // 🩹 Middleware de errores (debe ir al final)
 app.use(errorHandler);
