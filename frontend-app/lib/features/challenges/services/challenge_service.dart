@@ -1,5 +1,6 @@
 import '../../../core/services/api_service.dart';
 import '../models/challenge.dart';
+import '../models/challenge_submission_request.dart';
 
 class ChallengeService {
   final ApiService _api = ApiService();
@@ -13,6 +14,20 @@ class ChallengeService {
     }
   }
 
+  
+  Future<void> submitChallengeParticipation(
+    String challengeId, ChallengeSubmissionRequest data) async {
+    final response = await _api.post(
+    '/challenges/$challengeId/submissions',
+    body: data.toJson(),
+   );
+
+   if (response.statusCode != 200) {
+    throw Exception(response.data['message'] ?? 'Error al enviar participación');
+  }
+}
+
+  
   Future<List<Challenge>> getAllChallenges() async {
     final response = await _api.get('/challenges');
     if (response.statusCode == 200 && response.data is List) {
