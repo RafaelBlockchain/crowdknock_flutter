@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-
-// Pages
+import '../pages/splash_page.dart';
+import '../pages/onboarding_page.dart';
 import '../pages/home_page.dart';
 import '../pages/access_denied_page.dart';
-import '../pages/onboarding_page.dart';
-import '../pages/splash_page.dart';
 import '../pages/not_found_page.dart';
-
-// Features
 import '../features/auth/login_page.dart';
 import '../features/auth/register_page.dart';
 import '../features/challenges/challenge_list.dart';
@@ -16,19 +12,15 @@ import '../features/polls/ui/poll_list_page.dart';
 import '../features/reports/submit_report_screen.dart';
 import '../features/metrics/ui/app_metrics_screen.dart';
 import '../features/setting/ui/settings_screen.dart';
-
-// Routing
+import '../features/profile/edit_profile_screen.dart';
+import '../features/system_status/system_status_screen.dart';
 import 'app_routes.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case '/':
       case AppRoutes.splash:
         return MaterialPageRoute(builder: (_) => const SplashPage());
-
-      case '/access-denied':
-        return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
 
       case AppRoutes.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingPage());
@@ -41,6 +33,9 @@ class RouteGenerator {
 
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomePage());
+
+      case AppRoutes.accessDenied:
+        return MaterialPageRoute(builder: (_) => const AccessDeniedPage());
 
       case AppRoutes.challenges:
         return MaterialPageRoute(builder: (_) => const ChallengeListPage());
@@ -64,6 +59,12 @@ class RouteGenerator {
 
       case AppRoutes.settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
+
+      case AppRoutes.editProfile:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+
+      case AppRoutes.systemStatus:
+        return MaterialPageRoute(builder: (_) => const SystemStatusScreen());
 
       default:
         return MaterialPageRoute(builder: (_) => const NotFoundPage());
