@@ -1,0 +1,11 @@
+### Enviar participación solo con comentario (sin archivo)
+
+POST http://localhost:4000/api/challenges/CHALLENGE_ID_AQUI/submissions
+Authorization: Bearer {{TOKEN_AQUI}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="comment"
+
+Solo mi comentario, sin evidencia adjunta.
+--boundary--
