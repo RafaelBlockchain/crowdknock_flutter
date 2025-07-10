@@ -10,6 +10,6 @@ class ChallengeSubmissionRequest {
   });
 
   Map<String, String> toJson() => {
-        'comment': comment,
-      };
+    'comment': comment,
+  };
 }
