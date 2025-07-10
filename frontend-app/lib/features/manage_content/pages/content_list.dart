@@ -33,6 +33,15 @@ class _ContentListPageState extends State<ContentListPage> {
             return const Center(child: Text('No hay contenido disponible.'));
           }
 
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ContentDetailPage(contentId: content.id),
+              ),
+            );
+          },
+
           final contents = snapshot.data!;
           return ListView.builder(
             padding: const EdgeInsets.all(16),
