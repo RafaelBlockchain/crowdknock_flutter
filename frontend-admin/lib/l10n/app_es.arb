@@ -1,0 +1,12 @@
+{
+  "@@locale": "es",
+  "appTitle": "Panel Admin CrowdKnock",
+  "login": "Iniciar sesión",
+  "register": "Registrarse",
+  "logout": "Cerrar sesión",
+  "dashboard": "Tablero",
+  "users": "Usuarios",
+  "content": "Contenido",
+  "settings": "Configuración",
+  "language": "Idioma"
+}
