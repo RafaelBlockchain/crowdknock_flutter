@@ -30,6 +30,11 @@ class AppDrawer extends StatelessWidget {
             onTap: () => context.go('/settings'),
           ),
           ListTile(
+            leading: const Icon(Icons.settings),
+            title: Text(L.of(context).settings),
+            onTap: () => context.go('/settings'),
+          ),
+          ListTile(
             leading: const Icon(Icons.translate),
             title: const Text('Test Idiomas'),
             onTap: () => context.go('/test-localization'),
