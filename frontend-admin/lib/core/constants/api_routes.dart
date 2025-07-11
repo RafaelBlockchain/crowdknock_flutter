@@ -6,6 +6,9 @@ class ApiRoutes {
   // Usuarios
   static const String users = '/users';
   static String userById(int id) => '/users/$id';
+  static const String userReports = '/reports/user';
+  
+
 
   // Contenido
   static const String content = '/content';
@@ -19,7 +22,8 @@ class ApiRoutes {
   static const String feedbackAll = '/feedback/all';
   static const String moderationPending = '/moderation/pending';
   static const String moderationAction = '/moderation/action'; // con PATCH o POST
-
+  static const String resolveReport = '/reports/resolve'; // PATCH/POST con body { id }
+  
   // Feedback o reportes
   static const String feedback = '/feedback';
   static String feedbackById(int id) => '/feedback/$id';
