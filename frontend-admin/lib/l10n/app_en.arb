@@ -1,0 +1,12 @@
+{
+  "@@locale": "en",
+  "appTitle": "CrowdKnock Admin",
+  "login": "Login",
+  "register": "Register",
+  "logout": "Logout",
+  "dashboard": "Dashboard",
+  "users": "Users",
+  "content": "Content",
+  "settings": "Settings",
+  "language": "Language"
+}
