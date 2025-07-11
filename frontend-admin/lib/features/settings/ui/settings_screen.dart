@@ -5,6 +5,19 @@ import 'package:frontend_app/features/settings/widgets/language_picker.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
+  ElevatedButton.icon(
+  icon: const Icon(Icons.logout),
+  label: Text(L.of(context).logout),
+  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+  onPressed: () async {
+    const storage = FlutterSecureStorage();
+    await storage.delete(key: 'jwt');
+    if (!context.mounted) return;
+    context.go('/login');
+  },
+),
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
