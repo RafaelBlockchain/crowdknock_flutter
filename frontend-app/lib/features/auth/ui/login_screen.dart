@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_app/core/utils/locale_helper.dart';
 import 'package:frontend_app/core/widgets/loading_indicator.dart';
 import 'package:frontend_app/core/widgets/primary_button.dart';
 import 'package:frontend_app/data/services/auth_service.dart';
