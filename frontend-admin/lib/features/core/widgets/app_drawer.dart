@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend_app/core/utils/locale_helper.dart';
 import 'package:frontend_app/features/settings/widgets/language_picker.dart';
+import 'package:frontend_app/features/auth/widgets/logout_button.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -43,6 +44,8 @@ class AppDrawer extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: LanguagePicker(), // 👈 Cambio de idioma en Drawer
+          const Divider(),
+          const LogoutButton(), // 👈 Al final del menú
           ),
         ],
       ),
