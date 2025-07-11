@@ -7,15 +7,13 @@ class ApiRoutes {
   static const String emailTemplates = '/emails/templates';
   static const String updateEmailTemplate = '/emails/templates/update';
   static const String paymentsList = '/payments';
+  static const String feedbackAll = '/feedback';
 
-  
   // Usuarios
   static const String users = '/users';
   static String userById(int id) => '/users/$id';
   static const String userReports = '/reports/user';
   
-
-
   // Contenido
   static const String content = '/content';
   static String contentById(int id) => '/content/$id';
