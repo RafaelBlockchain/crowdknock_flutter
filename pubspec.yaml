@@ -29,6 +29,11 @@ dependencies:
   # Seguridad y autenticación
   jwt_decoder: ^2.0.1
 
+  # Internacionalización (i18n)
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -36,6 +41,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
     - assets/images/
@@ -43,3 +49,8 @@ flutter:
     - version.json
     - .env
 
+  localizations:
+    arb-dir: lib/l10n
+    template-arb-file: app_en.arb
+    output-localization-file: app_localizations.dart
+    enabled: true
