@@ -1,9 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:frontend_app/core/utils/locale_helper.dart';
 import 'package:frontend_app/core/widgets/admin_app_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
+ 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(L.of(context).dashboard),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: L.of(context).settings,
+            onPressed: () => context.go('/settings'),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              L.of(context).appTitle,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20),
+            Text("🔐 ${L.of(context).login}"),
+            Text("🆕 ${L.of(context).register}"),
+            Text("📤 ${L.of(context).logout}"),
+            Text("👥 ${L.of(context).users}"),
+            Text("📚 ${L.of(context).content}"),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+  
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
