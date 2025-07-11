@@ -16,6 +16,7 @@ class ApiRoutes {
   static const String userGrowth = '/metrics/user-growth';
   static const String contentActivity = '/metrics/content-activity';
   static const String topCategories = '/metrics/top-categories';
+  static const String feedbackAll = '/feedback/all';
 
   // Feedback o reportes
   static const String feedback = '/feedback';
