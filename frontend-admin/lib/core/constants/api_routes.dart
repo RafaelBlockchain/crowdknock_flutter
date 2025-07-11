@@ -6,6 +6,7 @@ class ApiRoutes {
   static const String resolveReport = '/reports/resolve';
   static const String emailTemplates = '/emails/templates';
   static const String updateEmailTemplate = '/emails/templates/update';
+  static const String paymentsList = '/payments';
 
   
   // Usuarios
