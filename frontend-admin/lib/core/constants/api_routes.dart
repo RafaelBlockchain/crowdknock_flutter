@@ -2,7 +2,7 @@ class ApiRoutes {
   // Auth
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
-
+  
   // Usuarios
   static const String users = '/users';
   static String userById(int id) => '/users/$id';
@@ -17,6 +17,8 @@ class ApiRoutes {
   static const String contentActivity = '/metrics/content-activity';
   static const String topCategories = '/metrics/top-categories';
   static const String feedbackAll = '/feedback/all';
+  static const String moderationPending = '/moderation/pending';
+  static const String moderationAction = '/moderation/action'; // con PATCH o POST
 
   // Feedback o reportes
   static const String feedback = '/feedback';
