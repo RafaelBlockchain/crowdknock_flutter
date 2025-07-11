@@ -2,7 +2,9 @@ class ApiRoutes {
   // Auth
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
-   
+  static const String userReports = '/reports/user';
+  static const String resolveReport = '/reports/resolve';
+  
   // Usuarios
   static const String users = '/users';
   static String userById(int id) => '/users/$id';
