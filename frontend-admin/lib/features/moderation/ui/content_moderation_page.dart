@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/admin_scaffold.dart';
+import 'package:frontend_admin/core/constants/app_colors.dart';
+import 'package:frontend_admin/core/layouts/admin_layout.dart';
+import 'package:frontend_admin/core/services/moderation_service.dart';
 
 class ContentModerationPage extends StatefulWidget {
   const ContentModerationPage({super.key});
@@ -9,148 +11,111 @@ class ContentModerationPage extends StatefulWidget {
 }
 
 class _ContentModerationPageState extends State<ContentModerationPage> {
-  final List<Map<String, String>> _videos = [
-    {
-      'id': '1',
-      'title': 'Summer Festival',
-      'uploader': 'john@example.com',
-    },
-  ];
+  final ModerationService _moderationService = ModerationService();
 
-  final List<Map<String, String>> _audios = [
-    {
-      'id': '3',
-      'title': 'Reggaeton Beat',
-      'uploader': 'linda@example.com',
-    },
-  ];
-
-  final List<Map<String, String>> _stories = [
-    {
-      'id': '12',
-      'title': 'My Adventure',
-      'uploader': 'mark@example.com',
-    },
-  ];
-
-  void _confirmDelete(String id, String type) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Eliminar contenido'),
-        content: const Text('¿Estás seguro de que deseas eliminar este contenido?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                switch (type) {
-                  case 'video':
-                    _videos.removeWhere((item) => item['id'] == id);
-                    break;
-                  case 'audio':
-                    _audios.removeWhere((item) => item['id'] == id);
-                    break;
-                  case 'story':
-                    _stories.removeWhere((item) => item['id'] == id);
-                    break;
-                }
-              });
-
-              // TODO: DELETE /api/content/:id con autenticación JWT
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('🗑️ Contenido eliminado')),
-              );
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Eliminar'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _handleAction(String id, String actionType) {
-    // TODO: Abrir detalles desde el backend
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('📂 $actionType del contenido #$id')),
-    );
-  }
+  List<Map<String, dynamic>> _pendingContent = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
-  Widget build(BuildContext context) {
-    return AdminScaffold(
-      title: '🛠️ Moderación de Contenido',
-      currentRoute: '/moderation',
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
+  void initState() {
+    super.initState();
+    _loadPendingContent();
+  }
+
+  Future<void> _loadPendingContent() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final content = await _moderationService.fetchPendingContent();
+      setState(() {
+        _pendingContent = content;
+      });
+    } catch (e) {
+      setState(() {
+        _error = 'Error al cargar contenido pendiente.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _moderateContent(String id, String action) async {
+    try {
+      await _moderationService.moderateContent(id, action);
+      _loadPendingContent(); // refresh
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al procesar contenido: $e')),
+      );
+    }
+  }
+
+  Widget _buildContentCard(Map<String, dynamic> content) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: const Icon(Icons.report, color: AppColors.warning),
+        title: Text(content['title'] ?? 'Sin título'),
+        subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Revisa y modera videos, audios e historias compartidas por la comunidad.',
-              style: TextStyle(color: Colors.grey),
+            if (content['description'] != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(content['description']),
+              ),
+            if (content['user'] != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text('Usuario: ${content['user']}',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              ),
+            if (content['submitted_at'] != null)
+              Text('Fecha: ${content['submitted_at']}',
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          ],
+        ),
+        isThreeLine: true,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.check_circle, color: Colors.green),
+              tooltip: 'Aprobar',
+              onPressed: () => _moderateContent(content['id'], 'approve'),
             ),
-            const SizedBox(height: 32),
-
-            _buildSection('🎥 Videos', _videos, 'video', 'Ver'),
-            const SizedBox(height: 32),
-
-            _buildSection('🎧 Audios', _audios, 'audio', 'Previsualizar'),
-            const SizedBox(height: 32),
-
-            _buildSection('📖 Historias', _stories, 'story', 'Revisar'),
+            IconButton(
+              icon: const Icon(Icons.cancel, color: Colors.red),
+              tooltip: 'Rechazar',
+              onPressed: () => _moderateContent(content['id'], 'reject'),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSection(String title, List<Map<String, String>> data, String type, String actionLabel) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 12),
-        Card(
-          child: DataTable(
-            headingRowColor: MaterialStateProperty.resolveWith((_) => Colors.grey[200]),
-            columns: const [
-              DataColumn(label: Text('ID')),
-              DataColumn(label: Text('Título')),
-              DataColumn(label: Text('Usuario')),
-              DataColumn(label: Text('Acciones')),
-            ],
-            rows: data.map((row) {
-              return DataRow(
-                cells: [
-                  DataCell(Text(row['id']!)),
-                  DataCell(Text(row['title']!)),
-                  DataCell(Text(row['uploader']!)),
-                  DataCell(Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => _handleAction(row['id']!, actionLabel),
-                        icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
-                        tooltip: actionLabel,
-                      ),
-                      IconButton(
-                        onPressed: () => _confirmDelete(row['id']!, type),
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        tooltip: 'Eliminar',
-                      ),
-                    ],
-                  )),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+  @override
+  Widget build(BuildContext context) {
+    return AdminLayout(
+      title: 'Moderación de Contenido',
+      child: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(child: Text(_error!, style: const TextStyle(color: Colors.red)))
+              : _pendingContent.isEmpty
+                  ? const Center(child: Text('No hay contenido pendiente por moderar.'))
+                  : ListView.builder(
+                      itemCount: _pendingContent.length,
+                      itemBuilder: (_, index) => _buildContentCard(_pendingContent[index]),
+                    ),
     );
   }
 }
