@@ -4,6 +4,9 @@ class ApiRoutes {
   static const String logout = '/auth/logout';
   static const String userReports = '/reports/user';
   static const String resolveReport = '/reports/resolve';
+  static const String emailTemplates = '/emails/templates';
+  static const String updateEmailTemplate = '/emails/templates/update';
+
   
   // Usuarios
   static const String users = '/users';
