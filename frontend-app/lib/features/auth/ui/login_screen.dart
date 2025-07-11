@@ -7,6 +7,45 @@ import 'package:frontend_app/data/services/auth_service.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(L.of(context).login),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                labelText: L.of(context).login,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // lógica de login aquí
+              },
+              child: Text(L.of(context).login),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                // navegación a registro
+              },
+              child: Text(L.of(context).register),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+  
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
