@@ -8,6 +8,8 @@ class ApiRoutes {
   static const String updateEmailTemplate = '/emails/templates/update';
   static const String paymentsList = '/payments';
   static const String feedbackAll = '/feedback';
+  static const String getSettings = '/settings';
+  static const String updateSettings = '/settings/update';
 
   // Usuarios
   static const String users = '/users';
