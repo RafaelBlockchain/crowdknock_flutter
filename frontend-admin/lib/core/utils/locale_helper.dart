@@ -6,3 +6,4 @@ class L {
     return AppLocalizations.of(context)!;
   }
 }
+ 
