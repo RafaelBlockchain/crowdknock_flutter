@@ -10,7 +10,9 @@ class ApiRoutes {
   static const String feedbackAll = '/feedback';
   static const String getSettings = '/settings';
   static const String updateSettings = '/settings/update';
-
+  static const String contentAll = '/content';
+  static const String contentById = '/content';
+  
   // Usuarios
   static const String users = '/users';
   static String userById(int id) => '/users/$id';
