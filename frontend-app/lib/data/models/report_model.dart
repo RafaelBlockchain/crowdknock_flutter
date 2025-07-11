@@ -1,46 +1,46 @@
-class ReportModel {
+class Report {
   final String id;
-  final String reportType; // Ej: 'contenido', 'usuario', 'sistema'
-  final String reportedItemId;
-  final String reason;
-  final String? details;
-  final String reporterId;
+  final String user;         // Alias de 'reportedBy'
+  final String contentId;
+  final String contentType;  // Alias de 'type'
+  final String reason;       // Alias de 'message'
   final DateTime createdAt;
-  final String status; // Ej: 'pendiente', 'resuelto', 'rechazado'
+  final String status;
 
-  ReportModel({
+  Report({
     required this.id,
-    required this.reportType,
-    required this.reportedItemId,
+    required this.user,
+    required this.contentId,
+    required this.contentType,
     required this.reason,
-    this.details,
-    required this.reporterId,
     required this.createdAt,
     required this.status,
   });
 
-  factory ReportModel.fromJson(Map<String, dynamic> json) {
-    return ReportModel(
-      id: json['id'],
-      reportType: json['reportType'],
-      reportedItemId: json['reportedItemId'],
-      reason: json['reason'],
-      details: json['details'],
-      reporterId: json['reporterId'],
-      createdAt: DateTime.parse(json['createdAt']),
-      status: json['status'],
+  factory Report.fromJson(Map<String, dynamic> json) {
+    return Report(
+      id: json['_id'] ?? json['id'] ?? '',
+      user: json['reportedBy'] ?? json['user'] ?? '',
+      contentId: json['contentId'] ?? '',
+      contentType: json['contentType'] ?? json['type'] ?? '',
+      reason: json['reason'] ?? json['message'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
+      status: json['status'] ?? 'pending',
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'reportType': reportType,
-    'reportedItemId': reportedItemId,
-    'reason': reason,
-    'details': details,
-    'reporterId': reporterId,
-    'createdAt': createdAt.toIso8601String(),
-    'status': status,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'reportedBy': user,
+      'contentId': contentId,
+      'contentType': contentType,
+      'reason': reason,
+      'createdAt': createdAt.toIso8601String(),
+      'status': status,
+    };
+  }
 }
 
