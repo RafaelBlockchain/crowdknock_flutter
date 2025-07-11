@@ -6,15 +6,15 @@ import 'package:frontend_admin/features/core/utils/http_client.dart';
 class FeedbackService {
   final HttpClient _client = HttpClient();
 
-  /// Obtiene todos los feedbacks enviados por usuarios
-  Future<List<Map<String, dynamic>>> getAllFeedback() async {
-    final http.Response res = await _client.get(ApiRoutes.feedbackAll); // Ej: /feedback/all
+  /// Obtiene todo el feedback de los usuarios desde el backend
+  Future<List<Map<String, dynamic>>> fetchAllFeedback() async {
+    final http.Response res = await _client.get(ApiRoutes.feedbackAll);
 
     if (res.statusCode == 200) {
       final List data = jsonDecode(res.body);
       return data.cast<Map<String, dynamic>>();
     } else {
-      throw Exception('Error al cargar feedback');
+      throw Exception('No se pudo cargar el feedback');
     }
   }
 }
