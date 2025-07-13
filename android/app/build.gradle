@@ -1,24 +1,23 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
 
 android {
-    namespace "com.example.crowdknock_flutter"
-    compileSdkVersion 34
+    namespace "com.example.crowdknock_flutter" // Usa el nombre real del paquete
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.crowdknock_flutter"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode 1
         versionName "1.0"
-
-        // Configuración Flutter
-        multiDexEnabled true
+        multiDexEnabled true  // Necesario si se usan muchas dependencias
     }
 
     buildTypes {
         release {
-            // Código ofuscado con Proguard (opcional)
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -29,17 +28,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
